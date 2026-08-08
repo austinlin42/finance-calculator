@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Financial Calculator - Glass Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class', 
-        }
-    </script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -17,10 +13,8 @@
     
     <div class="max-w-7xl mx-auto space-y-6 md:space-y-8 mt-2 md:mt-4">
         
-        <!-- 頂部 Header 區塊 (包含導覽列與工具按鈕，改為 Flexbox 響應式排版) -->
+        <!-- 頂部導覽與工具列 -->
         <div class="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6 relative z-20">
-            
-            <!-- 導覽列 (手機版在下 order-2，電腦版在左 order-1) -->
             <div class="flex overflow-x-auto hide-scrollbar w-full md:w-auto pb-2 md:pb-0 order-2 md:order-1">
                 <div class="mx-auto md:mx-0 w-max bg-white/40 dark:bg-black/40 backdrop-blur-2xl border border-white/60 dark:border-white/10 p-1.5 rounded-full flex flex-nowrap gap-1 shadow-[0_4px_16px_0_rgba(100,100,200,0.05)]">
                     <button @click="currentTab = 'budget'" :class="currentTab === 'budget' ? 'bg-white dark:bg-white/20 shadow-sm text-indigo-700 dark:text-indigo-100' : 'text-gray-500 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-white/10'" class="whitespace-nowrap px-5 md:px-6 py-2.5 rounded-full font-semibold transition-all duration-300 text-sm md:text-base">{{ t('tabs.budget') }}</button>
@@ -29,7 +23,6 @@
                 </div>
             </div>
 
-            <!-- 右上角工具列 (手機版在上 order-1 且靠右，電腦版在右 order-2) -->
             <div class="flex gap-3 order-1 md:order-2 w-full md:w-auto justify-end px-2 md:px-0">
                 <button @click="toggleLang" class="w-10 h-10 rounded-full bg-white/40 dark:bg-black/40 backdrop-blur-md border border-white/60 dark:border-white/10 flex items-center justify-center shadow-sm hover:scale-105 transition-transform text-sm font-bold text-indigo-900 dark:text-indigo-200">
                     {{ lang === 'zh' ? 'EN' : '中' }}
@@ -39,7 +32,6 @@
                     <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                 </button>
             </div>
-            
         </div>
 
         <!-- 主內容區 -->
@@ -71,7 +63,7 @@
                         </div>
                     </div>
 
-                    <!-- Planning -->
+                    <!-- Planning (Needs & Wants Tables) -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
                         <!-- Needs -->
                         <div class="bg-white/40 dark:bg-black/40 backdrop-blur-xl border border-white/60 dark:border-white/10 p-4 md:p-6 rounded-[1.25rem] md:rounded-[1.5rem] shadow-sm w-full">
@@ -91,7 +83,7 @@
                                     <transition-group name="list" tag="tbody">
                                         <tr v-for="(item, index) in needs" :key="item.id" class="border-b border-indigo-50/50 dark:border-indigo-900/30 group">
                                             <td class="py-2.5 pr-2 relative">
-                                                <div @click.stop="toggleDropdown(item.id, 'cat')" class="w-full p-2.5 bg-white/50 dark:bg-black/50 border border-white/80 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-300 cursor-pointer flex justify-between items-center hover:bg-white/70 dark:hover:bg-black/70 transition-colors shadow-sm text-indigo-900 dark:text-indigo-100 font-medium">
+                                                <div @click.stop="toggleDropdown(item.id, 'cat')" class="w-full p-2.5 bg-white/50 dark:bg-black/50 border border-white/80 dark:border-white/10 rounded-xl cursor-pointer flex justify-between items-center hover:bg-white/70 dark:hover:bg-black/70 transition-colors shadow-sm text-indigo-900 dark:text-indigo-100 font-medium">
                                                     <span class="truncate">{{ t('categories.' + item.categoryKey) }}</span>
                                                     <svg class="w-3 h-3 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                                 </div>
@@ -113,14 +105,10 @@
                                                     </div>
                                                 </transition>
                                             </td>
-                                            <td class="py-2.5 pr-2">
-                                                <div class="relative">
-                                                    <input type="number" min="0" v-model="item.amount" class="w-full p-2.5 pr-7 bg-white/50 dark:bg-black/50 border border-white/80 dark:border-white/10 rounded-xl text-right focus:bg-white dark:focus:bg-black focus:ring-2 focus:ring-indigo-300 outline-none transition-all shadow-sm text-indigo-900 dark:text-indigo-100 font-semibold">
-                                                </div>
-                                            </td>
+                                            <td class="py-2.5 pr-2"><input type="number" min="0" v-model="item.amount" class="w-full p-2.5 pr-7 bg-white/50 dark:bg-black/50 border border-white/80 dark:border-white/10 rounded-xl text-right focus:bg-white dark:focus:bg-black focus:ring-2 focus:ring-indigo-300 outline-none transition-all shadow-sm text-indigo-900 dark:text-indigo-100 font-semibold"></td>
                                             <td class="py-2.5 text-right font-bold text-indigo-800 dark:text-indigo-200 truncate transition-all">{{ format(item.amount * freqMap[item.freqKey]) }}</td>
                                             <td class="py-2.5 text-center">
-                                                <button @click="needs.splice(index, 1)" class="p-2 text-indigo-300 dark:text-indigo-500 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-rose-100/50 dark:hover:bg-rose-900/50 rounded-xl transition-all">
+                                                <button @click="needs.splice(index, 1)" class="p-2 text-indigo-300 dark:text-indigo-500 hover:text-rose-500 rounded-xl transition-all">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                                 </button>
                                             </td>
@@ -128,15 +116,15 @@
                                     </transition-group>
                                 </table>
                             </div>
-                            <button @click="needs.push({id: generateId(), categoryKey:'food', item:'', freqKey:'month', amount:0})" class="w-full mt-4 py-3 bg-white/30 dark:bg-black/30 border border-white/60 dark:border-white/10 text-indigo-600 dark:text-indigo-300 hover:bg-white/60 dark:hover:bg-white/10 rounded-xl font-bold transition-all flex items-center justify-center gap-2">
+                            <button @click="needs.push({id: generateId(), categoryKey:'food', item:'', freqKey:'month', amount:0})" class="w-full mt-4 py-3 bg-white/30 dark:bg-black/30 border border-white/60 dark:border-white/10 text-indigo-600 dark:text-indigo-300 rounded-xl font-bold transition-all flex items-center justify-center gap-2">
                                 <span class="text-xl leading-none">+</span> {{ t('budget.addNeed') }}
                             </button>
                         </div>
 
                         <!-- Wants -->
                         <div class="bg-white/40 dark:bg-black/40 backdrop-blur-xl border border-white/60 dark:border-white/10 p-4 md:p-6 rounded-[1.25rem] md:rounded-[1.5rem] shadow-sm w-full">
-                             <h3 class="text-lg font-bold mb-4 md:mb-5 text-purple-700 dark:text-purple-300 bg-purple-100/50 dark:bg-purple-900/50 inline-block px-4 py-1.5 rounded-lg border border-purple-200/30 dark:border-purple-700/30">{{ t('budget.wants') }}</h3>
-                             <div class="overflow-x-auto hide-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+                            <h3 class="text-lg font-bold mb-4 md:mb-5 text-purple-700 dark:text-purple-300 bg-purple-100/50 dark:bg-purple-900/50 inline-block px-4 py-1.5 rounded-lg border border-purple-200/30 dark:border-purple-700/30">{{ t('budget.wants') }}</h3>
+                            <div class="overflow-x-auto hide-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
                                 <table class="w-full min-w-[560px] table-fixed text-sm text-left border-collapse">
                                     <thead>
                                         <tr class="text-purple-900/50 dark:text-purple-300/50 border-b border-purple-100/50 dark:border-purple-800/50">
@@ -151,13 +139,13 @@
                                     <transition-group name="list" tag="tbody">
                                         <tr v-for="(item, index) in wants" :key="item.id" class="border-b border-purple-50/50 dark:border-purple-900/30 group">
                                             <td class="py-2.5 pr-2 relative">
-                                                <div @click.stop="toggleDropdown(item.id, 'cat')" class="w-full p-2.5 bg-white/50 dark:bg-black/50 border border-white/80 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-purple-300 cursor-pointer flex justify-between items-center text-purple-900 dark:text-purple-100 font-medium">
+                                                <div @click.stop="toggleDropdown(item.id, 'cat')" class="w-full p-2.5 bg-white/50 dark:bg-black/50 border border-white/80 dark:border-white/10 rounded-xl cursor-pointer flex justify-between items-center text-purple-900 dark:text-purple-100 font-medium">
                                                     <span class="truncate">{{ t('categories.' + item.categoryKey) }}</span>
                                                     <svg class="w-3 h-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                                 </div>
                                                 <transition name="dropdown">
-                                                    <div v-show="activeDropdown === item.id + '-cat'" class="absolute z-50 w-max min-w-full left-0 mt-1 bg-white/80 dark:bg-black/80 backdrop-blur-2xl border border-white/80 dark:border-white/20 rounded-xl shadow-[0_10px_25px_rgba(0,0,0,0.1)] overflow-hidden py-1">
-                                                        <div v-for="c in categories" @click="item.categoryKey = c; closeDropdown()" class="px-3 py-2.5 hover:bg-purple-50 dark:hover:bg-purple-900/50 cursor-pointer text-purple-900 dark:text-purple-100 transition-colors font-medium">{{ t('categories.' + c) }}</div>
+                                                    <div v-show="activeDropdown === item.id + '-cat'" class="absolute z-50 w-max min-w-full left-0 mt-1 bg-white/80 dark:bg-black/85 backdrop-blur-2xl border border-white/80 rounded-xl shadow-lg overflow-hidden py-1">
+                                                        <div v-for="c in categories" @click="item.categoryKey = c; closeDropdown()" class="px-3 py-2.5 hover:bg-purple-50 dark:hover:bg-purple-900/50 cursor-pointer text-purple-900 dark:text-purple-100 font-medium">{{ t('categories.' + c) }}</div>
                                                     </div>
                                                 </transition>
                                             </td>
@@ -168,19 +156,15 @@
                                                     <svg class="w-3 h-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                                 </div>
                                                 <transition name="dropdown">
-                                                    <div v-show="activeDropdown === item.id + '-freq'" class="absolute z-50 w-full left-0 mt-1 bg-white/80 dark:bg-black/80 backdrop-blur-2xl border border-white/80 dark:border-white/20 rounded-xl shadow-[0_10px_25px_rgba(0,0,0,0.1)] overflow-hidden py-1">
-                                                        <div v-for="(val, key) in freqMap" @click="item.freqKey = key; closeDropdown()" class="px-3 py-2.5 hover:bg-purple-50 dark:hover:bg-purple-900/50 cursor-pointer text-purple-900 dark:text-purple-100 transition-colors font-medium">{{ t('freqs.' + key) }}</div>
+                                                    <div v-show="activeDropdown === item.id + '-freq'" class="absolute z-50 w-full left-0 mt-1 bg-white/80 dark:bg-black/85 backdrop-blur-2xl border border-white/80 rounded-xl shadow-lg overflow-hidden py-1">
+                                                        <div v-for="(val, key) in freqMap" @click="item.freqKey = key; closeDropdown()" class="px-3 py-2.5 hover:bg-purple-50 dark:hover:bg-purple-900/50 cursor-pointer text-purple-900 dark:text-purple-100 font-medium">{{ t('freqs.' + key) }}</div>
                                                     </div>
                                                 </transition>
                                             </td>
-                                            <td class="py-2.5 pr-2">
-                                                <div class="relative">
-                                                    <input type="number" min="0" v-model="item.amount" class="w-full p-2.5 pr-7 bg-white/50 dark:bg-black/50 border border-white/80 dark:border-white/10 rounded-xl text-right focus:bg-white dark:focus:bg-black focus:ring-2 focus:ring-purple-300 outline-none transition-all shadow-sm text-purple-900 dark:text-purple-100 font-semibold">
-                                                </div>
-                                            </td>
+                                            <td class="py-2.5 pr-2"><input type="number" min="0" v-model="item.amount" class="w-full p-2.5 pr-7 bg-white/50 dark:bg-black/50 border border-white/80 dark:border-white/10 rounded-xl text-right focus:bg-white dark:focus:bg-black focus:ring-2 focus:ring-purple-300 outline-none transition-all shadow-sm text-purple-900 dark:text-purple-100 font-semibold"></td>
                                             <td class="py-2.5 text-right font-bold text-purple-800 dark:text-purple-200 truncate transition-all">{{ format(item.amount * freqMap[item.freqKey]) }}</td>
                                             <td class="py-2.5 text-center">
-                                                <button @click="wants.splice(index, 1)" class="p-2 text-purple-300 dark:text-purple-500 hover:text-rose-500 hover:bg-rose-100/50 rounded-xl transition-all">
+                                                <button @click="wants.splice(index, 1)" class="p-2 text-purple-300 hover:text-rose-500 rounded-xl transition-all">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                                 </button>
                                             </td>
@@ -188,12 +172,115 @@
                                     </transition-group>
                                 </table>
                             </div>
-                            <button @click="wants.push({id: generateId(), categoryKey:'fun', item:'', freqKey:'month', amount:0})" class="w-full mt-4 py-3 bg-white/30 dark:bg-black/30 border border-white/60 dark:border-white/10 text-purple-600 dark:text-purple-300 hover:bg-white/60 dark:hover:bg-white/10 rounded-xl font-bold transition-all flex items-center justify-center gap-2">
+                            <button @click="wants.push({id: generateId(), categoryKey:'fun', item:'', freqKey:'month', amount:0})" class="w-full mt-4 py-3 bg-white/30 dark:bg-black/30 border border-white/60 dark:border-white/10 text-purple-600 dark:text-purple-300 rounded-xl font-bold transition-all flex items-center justify-center gap-2">
                                 <span class="text-xl leading-none">+</span> {{ t('budget.addWant') }}
                             </button>
                         </div>
                     </div>
                 </div>
+
+                <!-- 工具二：財富自由計算機 (FIRE) -->
+                <div v-else-if="currentTab === 'fire'" key="fire" class="space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+                        <div class="bg-white/40 dark:bg-black/40 backdrop-blur-xl border border-white/60 dark:border-white/10 p-6 md:p-8 rounded-[1.5rem] shadow-sm flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-lg font-bold border-b border-indigo-100/50 pb-3 mb-5 text-indigo-800 dark:text-indigo-200">目標設定</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-indigo-900/70 dark:text-indigo-300 mb-2">我今年幾歲</label>
+                                        <div class="relative"><input type="number" min="0" v-model="fire.currentAge" class="w-full p-3.5 pr-8 bg-white/60 dark:bg-black/50 border rounded-xl text-right font-semibold text-indigo-900 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-400 font-bold">歲</span></div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-indigo-900/70 dark:text-indigo-300 mb-2">預計FIRE退休年齡</label>
+                                        <div class="relative"><input type="number" min="0" v-model="fire.fireAge" class="w-full p-3.5 pr-8 bg-white/60 dark:bg-black/50 border rounded-xl text-right font-semibold text-indigo-900 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-400 font-bold">歲</span></div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-indigo-900/70 dark:text-indigo-300 mb-2">預計活到幾歲</label>
+                                        <div class="relative"><input type="number" min="0" v-model="fire.deathAge" class="w-full p-3.5 pr-8 bg-white/60 dark:bg-black/50 border rounded-xl text-right font-semibold text-indigo-900 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-400 font-bold">歲</span></div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-indigo-900/70 mb-2">退休後每年提領</label>
+                                        <div class="relative"><input type="number" min="0" v-model="fire.annualWithdraw" class="w-full p-3.5 pr-8 bg-white/60 dark:bg-black/50 border rounded-xl text-right font-semibold text-indigo-900 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-400 font-bold">元</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold border-b border-indigo-100/50 pb-3 mb-5 text-indigo-800 dark:text-indigo-200">Plan (達成計畫)</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-indigo-900/70 dark:text-indigo-300 mb-2">目前已備資產</label>
+                                        <div class="relative"><input type="number" min="0" v-model="fire.currentSavings" class="w-full p-3.5 pr-8 bg-white/60 dark:bg-black/50 border rounded-xl text-right font-semibold text-indigo-900 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-400 font-bold">元</span></div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-indigo-900/70 dark:text-indigo-300 mb-2">預期殖利率 (R)</label>
+                                        <div class="relative"><input type="number" min="0" step="0.1" v-model="fire.yieldRate" class="w-full p-3.5 pr-8 bg-white/60 dark:bg-black/50 border rounded-xl text-right font-semibold text-indigo-900 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-400 font-bold">%</span></div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-indigo-900/70 dark:text-indigo-300 mb-2">大盤年化報酬 (r)</label>
+                                        <div class="relative"><input type="number" min="0" step="0.1" v-model="fire.investReturn" class="w-full p-3.5 pr-8 bg-white/60 dark:bg-black/50 border rounded-xl text-right font-semibold text-indigo-900 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-400 font-bold">%</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 結算區 -->
+                        <div class="space-y-6 flex flex-col justify-center">
+                            <div class="bg-white/60 dark:bg-black/50 backdrop-blur-2xl border p-6 md:p-8 rounded-[1.5rem] shadow-sm">
+                                <h4 class="text-sm font-bold text-blue-500 mb-2 uppercase">財富自由需要累積</h4>
+                                <div class="text-3xl md:text-5xl font-black text-indigo-900 dark:text-indigo-100 mb-4">${{ format(fireCalc.target) }}</div>
+                                <div class="font-mono bg-white/50 dark:bg-black/40 p-4 rounded-xl text-xs text-indigo-900/70 dark:text-indigo-200">
+                                    <p class="font-bold mb-1">公式推導 (期初現值):</p>
+                                    <p>PV = (1 - (1+R)^-N) / R = {{ fireCalc.pvFactor.toFixed(2) }}</p>
+                                    <p>目標 = 每年提領 × (1+R) × PV</p>
+                                </div>
+                            </div>
+                            <div class="bg-white/60 dark:bg-black/50 backdrop-blur-2xl border p-6 md:p-8 rounded-[1.5rem] shadow-sm">
+                                <h4 class="text-sm font-bold text-purple-500 mb-2 uppercase">計畫（每月需定期定額）</h4>
+                                <div class="text-3xl md:text-5xl font-black text-purple-900 dark:text-purple-100 mb-4">${{ format(fireCalc.monthlyNeeded) }}</div>
+                                <div class="font-mono bg-white/50 dark:bg-black/40 p-4 rounded-xl text-xs text-purple-900/70 dark:text-purple-200">
+                                    <p class="font-bold mb-1">公式推導 (年金終值):</p>
+                                    <p>FV = ((1+月利率)^n - 1) / 月利率 = {{ fireCalc.fvFactor.toFixed(2) }}</p>
+                                    <p>每月需存 = 資金缺口 / FV</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 工具三：定期定額計算機 -->
+                <div v-else-if="currentTab === 'regular'" key="regular" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
+                        <div class="bg-white/40 dark:bg-black/40 backdrop-blur-xl border border-white/60 dark:border-white/10 p-6 md:p-10 rounded-[1.5rem] shadow-sm flex flex-col justify-center">
+                            <h3 class="text-xl font-bold border-b border-indigo-100/50 pb-4 mb-6 text-indigo-800 dark:text-indigo-200">參數設定</h3>
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-indigo-900/70 dark:text-indigo-300 mb-2">每月定期定額投入</label>
+                                    <div class="relative"><input type="number" min="0" v-model="regular.monthly" class="w-full p-4 pr-10 bg-white/60 dark:bg-black/50 border rounded-xl text-right font-semibold text-indigo-900 dark:text-indigo-100 text-lg"><span class="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-400 font-bold">元</span></div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-indigo-900/70 dark:text-indigo-300 mb-2">預期年化報酬率 (r%)</label>
+                                    <div class="relative"><input type="number" min="0" step="0.1" v-model="regular.rate" class="w-full p-4 pr-10 bg-white/60 dark:bg-black/50 border rounded-xl text-right font-semibold text-indigo-900 dark:text-indigo-100 text-lg"><span class="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-400 font-bold">%</span></div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-indigo-900/70 dark:text-indigo-300 mb-2">預計持續年數 (n)</label>
+                                    <div class="relative"><input type="number" min="0" v-model="regular.years" class="w-full p-4 pr-10 bg-white/60 dark:bg-black/50 border rounded-xl text-right font-semibold text-indigo-900 dark:text-indigo-100 text-lg"><span class="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-400 font-bold">年</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col justify-center">
+                            <div class="bg-gradient-to-br from-indigo-300/40 to-purple-300/40 dark:from-indigo-900/60 dark:to-purple-900/60 backdrop-blur-3xl border border-white/70 p-6 md:p-10 rounded-[1.5rem] shadow-xl text-center h-full flex flex-col justify-center relative overflow-hidden">
+                                <h4 class="text-sm md:text-lg font-bold text-indigo-900/70 dark:text-indigo-200 mb-2 uppercase">預期累積金額</h4>
+                                <div class="text-4xl md:text-6xl font-black text-indigo-900 dark:text-indigo-100 mb-6 tracking-tight">${{ format(regularCalc.totalValue) }}</div>
+                                <div class="text-xs md:text-sm text-left font-mono bg-white/50 dark:bg-black/40 p-4 rounded-xl border border-white/80 dark:border-white/10 text-indigo-900/70 dark:text-indigo-200">
+                                    <strong class="text-indigo-900 dark:text-indigo-100 mb-2 block">公式推導 (年金終值 FV)：</strong>
+                                    <p>月利率 = {{ (regular.rate/12).toFixed(3) }}% | 總期數 = {{ regular.years * 12 }} 個月</p>
+                                    <p class="mt-2 font-bold">累積金額 = 每月投入 × 終值係數 ({{ regularCalc.fvFactor.toFixed(2) }})</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </transition>
         </div>
     </div>
