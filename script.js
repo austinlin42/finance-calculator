@@ -4,6 +4,7 @@ const messages = {
     zh: {
         tabs: { budget: '1. 預算規劃工具', fire: '2. 財富自由計算機', regular: '3. 定期定額計算機' },
         budget: {
+            refTitle: '填寫參考指南',
             summaryTitle: '年度預算總結', needs: '生存 / 需要 (Needs)', wants: '生活 / 想要 (Wants)',
             totalBudget: '總年度預算 (Avg/月)', monthlyAvg: '每月約',
             category: '類別', item: '項目', freq: '頻率', amount: '金額', annual: '年花費',
@@ -15,6 +16,7 @@ const messages = {
     en: {
         tabs: { budget: '1. Budget Planner', fire: '2. FIRE Calculator', regular: '3. Regular Investment' },
         budget: {
+            refTitle: 'Filling Reference Guide',
             summaryTitle: 'Annual Budget Summary', needs: 'Needs', wants: 'Wants',
             totalBudget: 'Total Annual Budget (Avg/Mo)', monthlyAvg: 'Monthly ~',
             category: 'Category', item: 'Item', freq: 'Freq.', amount: 'Amount', annual: 'Annual',
