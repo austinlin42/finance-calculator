@@ -48,13 +48,54 @@ createApp({
             return path.split('.').reduce((obj, key) => obj && obj[key], messages[lang.value]) || path;
         };
 
-        // 下拉選單狀態
-        const activeDropdown = ref(null);
-        const toggleDropdown = (id, type) => {
-            const key = id + '-' + type;
-            activeDropdown.value = activeDropdown.value === key ? null : key;
+        // --- 全域絕對定位下拉選單邏輯 ---
+        const activeDropdown = ref(null); // 格式: { id, type, targetType: 'needs'|'wants' }
+        const dropdownStyle = ref({});
+        const cellRefs = {};
+
+        const setCellRef = (id, type, el) => {
+            if (!cellRefs[id]) cellRefs[id] = {};
+            cellRefs[id][type] = el;
         };
-        const closeDropdown = () => { activeDropdown.value = null; };
+
+        const toggleDropdown = (id, type, event, targetType = 'needs') => {
+            if (activeDropdown.value && activeDropdown.value.id === id && activeDropdown.value.type === type) {
+                activeDropdown.value = null;
+                return;
+            }
+            const el = event.currentTarget;
+            if (el) {
+                const rect = el.getBoundingClientRect();
+                dropdownStyle.value = {
+                    top: (rect.bottom + 6) + 'px',
+                    left: rect.left + 'px',
+                    minWidth: rect.width + 'px'
+                };
+            }
+            activeDropdown.value = { id, type, targetType };
+        };
+
+        const closeDropdown = () => {
+            activeDropdown.value = null;
+        };
+
+        const selectCategory = (c) => {
+            if (!activeDropdown.value) return;
+            const { id, targetType } = activeDropdown.value;
+            const targetList = targetType === 'wants' ? wants.value : needs.value;
+            const item = targetList.find(i => i.id === id);
+            if (item) item.categoryKey = c;
+            closeDropdown();
+        };
+
+        const selectFreq = (key) => {
+            if (!activeDropdown.value) return;
+            const { id, targetType } = activeDropdown.value;
+            const targetList = targetType === 'wants' ? wants.value : needs.value;
+            const item = targetList.find(i => i.id === id);
+            if (item) item.freqKey = key;
+            closeDropdown();
+        };
 
         // 1. Budget
         const categories = ['food', 'clothing', 'housing', 'transport', 'education', 'fun', 'medical', 'misc', 'tax'];
@@ -109,7 +150,7 @@ createApp({
         return {
             currentTab, format, generateId,
             isDark, toggleTheme, lang, toggleLang, t,
-            activeDropdown, toggleDropdown, closeDropdown,
+            activeDropdown, dropdownStyle, toggleDropdown, closeDropdown, setCellRef, selectCategory, selectFreq,
             categories, freqMap, needs, wants, totalNeeds, totalWants,
             fire, fireErrors, fireCalc, regular, regularCalc
         };
