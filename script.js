@@ -10,8 +10,25 @@ const messages = {
             category: '類別', item: '項目', freq: '頻率', amount: '金額', annual: '年花費',
             addNeed: '新增需要項目', addWant: '新增想要項目'
         },
+        refDesc: {
+            food: '三餐/聚餐', clothing: '衣物/保養', housing: '水電/房租', transport: '通勤/油資',
+            education: '學費/書籍', fun: '影音/旅遊', medical: '就醫/保健', tax: '所得/保險'
+        },
         categories: { food: '🍔 食', clothing: '👕 衣', housing: '🏠 住', transport: '🚗 行', education: '📚 育', fun: '🎮 樂', medical: '💊 醫', misc: '🎁 雜', tax: '📄 稅' },
-        freqs: { day: '日', week: '週', month: '月', bimonth: '雙月', quarter: '季', year: '年' }
+        freqs: { day: '日', week: '週', month: '月', bimonth: '雙月', quarter: '季', year: '年' },
+        units: { age: '歲', currency: '元', year: '年' },
+        fire: {
+            goalTitle: '目標設定', planTitle: 'Plan (達成計畫)',
+            currentAge: '我今年幾歲', fireAge: '預計FIRE退休年齡', deathAge: '預計活到幾歲', annualWithdraw: '退休後每年提領',
+            currentSavings: '目前已備資產', yieldRate: '預期殖利率 (R)', investReturn: '大盤年化報酬 (r)',
+            targetHeader: '財富自由需要累積', planHeader: '計畫（每月需定期定額）',
+            formulaPV: '公式推導 (期初現值):', targetDesc: '目標 = 每年提領 × (1+R) × PV',
+            formulaFV: '公式推導 (年金終值):', planDesc: '每月需存 = 資金缺口 / FV'
+        },
+        regular: {
+            paramsTitle: '參數設定', monthlyInvest: '每月定期定額投入', annualRate: '預期年化報酬率 (r%)', years: '預計持續年數 (n)',
+            resultTitle: '預期累積金額', formulaTitle: '公式推導 (年金終值 FV)：', moRateText: '月利率', totalPeriods: '總期數', monthsText: '個月', formulaDesc: '累積金額 = 每月投入 × 終值係數'
+        }
     },
     en: {
         tabs: { budget: '1. Budget Planner', fire: '2. FIRE Calculator', regular: '3. Regular Investment' },
@@ -22,8 +39,25 @@ const messages = {
             category: 'Category', item: 'Item', freq: 'Freq.', amount: 'Amount', annual: 'Annual',
             addNeed: 'Add Need', addWant: 'Add Want'
         },
+        refDesc: {
+            food: 'Meals', clothing: 'Apparel', housing: 'Rent/Utilities', transport: 'Commute',
+            education: 'Tuition/Books', fun: 'Travel/Media', medical: 'Healthcare', tax: 'Tax/Insurance'
+        },
         categories: { food: '🍔 Food', clothing: '👕 Cloth', housing: '🏠 House', transport: '🚗 Trans', education: '📚 Edu', fun: '🎮 Fun', medical: '💊 Med', misc: '🎁 Misc', tax: '📄 Tax' },
-        freqs: { day: 'Day', week: 'Week', month: 'Month', bimonth: 'Bi-Mo', quarter: 'Qtr', year: 'Year' }
+        freqs: { day: 'Day', week: 'Week', month: 'Month', bimonth: 'Bi-Mo', quarter: 'Qtr', year: 'Year' },
+        units: { age: 'yo', currency: 'NT$', year: 'Yrs' },
+        fire: {
+            goalTitle: 'Goal Settings', planTitle: 'Plan',
+            currentAge: 'Current Age', fireAge: 'Target FIRE Age', deathAge: 'Life Expectancy', annualWithdraw: 'Annual Withdrawal',
+            currentSavings: 'Current Savings', yieldRate: 'Yield Rate (R)', investReturn: 'Market Return (r)',
+            targetHeader: 'Required FIRE Capital', planHeader: 'Plan (Monthly Investment Needed)',
+            formulaPV: 'Formula (Present Value of Annuity):', targetDesc: 'Target = Annual Withdrawal × (1+R) × PV Factor',
+            formulaFV: 'Formula (Future Value of Annuity):', planDesc: 'Monthly Need = Shortfall / FV Factor'
+        },
+        regular: {
+            paramsTitle: 'Parameters', monthlyInvest: 'Monthly Investment', annualRate: 'Expected Annual Return (r%)', years: 'Investment Years (n)',
+            resultTitle: 'Expected Accumulated Value', formulaTitle: 'Formula (Future Value FV):', moRateText: 'Monthly Rate', totalPeriods: 'Total Periods', monthsText: 'months', formulaDesc: 'Total Value = Monthly Investment × FV Factor'
+        }
     }
 };
 
@@ -33,7 +67,6 @@ createApp({
         const format = (num) => isNaN(num) || num < 0 ? '0' : Math.round(num).toLocaleString('en-US');
         const generateId = () => Math.random().toString(36).substring(2, 9);
 
-        // 深淺色
         const isDark = ref(false);
         const toggleTheme = () => {
             isDark.value = !isDark.value;
@@ -41,23 +74,14 @@ createApp({
             else document.documentElement.classList.remove('dark');
         };
 
-        // 語系
         const lang = ref('zh');
         const toggleLang = () => { lang.value = lang.value === 'zh' ? 'en' : 'zh'; };
         const t = (path) => {
             return path.split('.').reduce((obj, key) => obj && obj[key], messages[lang.value]) || path;
         };
 
-        // --- 全域絕對定位下拉選單邏輯 ---
-        const activeDropdown = ref(null); // 格式: { id, type, targetType: 'needs'|'wants' }
+        const activeDropdown = ref(null);
         const dropdownStyle = ref({});
-        const cellRefs = {};
-
-        const setCellRef = (id, type, el) => {
-            if (!cellRefs[id]) cellRefs[id] = {};
-            cellRefs[id][type] = el;
-        };
-
         const toggleDropdown = (id, type, event, targetType = 'needs') => {
             if (activeDropdown.value && activeDropdown.value.id === id && activeDropdown.value.type === type) {
                 activeDropdown.value = null;
@@ -75,9 +99,7 @@ createApp({
             activeDropdown.value = { id, type, targetType };
         };
 
-        const closeDropdown = () => {
-            activeDropdown.value = null;
-        };
+        const closeDropdown = () => { activeDropdown.value = null; };
 
         const selectCategory = (c) => {
             if (!activeDropdown.value) return;
@@ -97,7 +119,6 @@ createApp({
             closeDropdown();
         };
 
-        // 1. Budget
         const categories = ['food', 'clothing', 'housing', 'transport', 'education', 'fun', 'medical', 'misc', 'tax'];
         const freqMap = { day: 365, week: 52, month: 12, bimonth: 6, quarter: 4, year: 1 };
         
@@ -112,12 +133,11 @@ createApp({
         const totalNeeds = computed(() => needs.value.reduce((acc, cur) => acc + (Math.max(0, cur.amount) * freqMap[cur.freqKey]), 0));
         const totalWants = computed(() => wants.value.reduce((acc, cur) => acc + (Math.max(0, cur.amount) * freqMap[cur.freqKey]), 0));
 
-        // 2. FIRE Calculator
         const fire = ref({ currentAge: 30, fireAge: 55, yieldRate: 5.0, annualWithdraw: 840000, deathAge: 80, currentSavings: 600000, investReturn: 7.0 });
         const fireErrors = computed(() => {
             const errs = {};
-            if (fire.value.fireAge <= fire.value.currentAge) errs.age = '退休需大於目前';
-            if (fire.value.deathAge <= fire.value.fireAge) errs.death = '壽命需大於退休';
+            if (fire.value.fireAge <= fire.value.currentAge) errs.age = 'Invalid Age';
+            if (fire.value.deathAge <= fire.value.fireAge) errs.death = 'Invalid Age';
             return errs;
         });
         const fireCalc = computed(() => {
@@ -137,7 +157,6 @@ createApp({
             return { n, N, pvFactor, target, currentFV, shortfall, fvFactor, monthlyNeeded };
         });
 
-        // 3. Regular Investment
         const regular = ref({ monthly: 10000, rate: 7.0, years: 30 });
         const regularCalc = computed(() => {
             const months = Math.max(0, regular.value.years) * 12;
@@ -150,7 +169,7 @@ createApp({
         return {
             currentTab, format, generateId,
             isDark, toggleTheme, lang, toggleLang, t,
-            activeDropdown, dropdownStyle, toggleDropdown, closeDropdown, setCellRef, selectCategory, selectFreq,
+            activeDropdown, dropdownStyle, toggleDropdown, closeDropdown, selectCategory, selectFreq,
             categories, freqMap, needs, wants, totalNeeds, totalWants,
             fire, fireErrors, fireCalc, regular, regularCalc
         };
