@@ -104,7 +104,7 @@
                                         <tr v-for="(item, index) in needs" :key="item.id" class="border-b border-indigo-100/40 dark:border-indigo-900/30 group">
                                             <!-- 類別下拉選單觸發按鈕 -->
                                             <td class="py-2.5 pr-2">
-                                                <div :ref="el => setCellRef(item.id, 'cat', el)" @click.stop="toggleDropdown(item.id, 'cat', $event)" class="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl cursor-pointer flex justify-between items-center hover:bg-white shadow-sm text-indigo-950 dark:text-indigo-100 font-bold">
+                                                <div @click.stop="toggleDropdown(item.id, 'cat', $event, 'needs')" class="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl cursor-pointer flex justify-between items-center hover:bg-white shadow-sm text-indigo-950 dark:text-indigo-100 font-bold">
                                                     <span class="truncate">{{ t('categories.' + item.categoryKey) }}</span>
                                                     <svg class="w-3 h-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                                 </div>
@@ -112,7 +112,7 @@
                                             <td class="py-2.5 pr-2"><input type="text" v-model="item.item" class="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all shadow-sm text-indigo-950 dark:text-indigo-100 font-bold"></td>
                                             <!-- 頻率下拉選單觸發按鈕 -->
                                             <td class="py-2.5 pr-2">
-                                                <div :ref="el => setCellRef(item.id, 'freq', el)" @click.stop="toggleDropdown(item.id, 'freq', $event)" class="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl cursor-pointer flex justify-between items-center hover:bg-white shadow-sm text-indigo-950 dark:text-indigo-100 font-bold">
+                                                <div @click.stop="toggleDropdown(item.id, 'freq', $event, 'needs')" class="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl cursor-pointer flex justify-between items-center hover:bg-white shadow-sm text-indigo-950 dark:text-indigo-100 font-bold">
                                                     <span>{{ t('freqs.' + item.freqKey) }}</span>
                                                     <svg class="w-3 h-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                                 </div>
@@ -152,7 +152,7 @@
                                         <tr v-for="(item, index) in wants" :key="item.id" class="border-b border-purple-100/40 dark:border-purple-900/30 group">
                                             <!-- 類別下拉選單觸發按鈕 -->
                                             <td class="py-2.5 pr-2">
-                                                <div :ref="el => setCellRef(item.id, 'cat', el)" @click.stop="toggleDropdown(item.id, 'cat', $event)" class="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl cursor-pointer flex justify-between items-center hover:bg-white shadow-sm text-purple-950 dark:text-purple-100 font-bold">
+                                                <div @click.stop="toggleDropdown(item.id, 'cat', $event, 'wants')" class="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl cursor-pointer flex justify-between items-center hover:bg-white shadow-sm text-purple-950 dark:text-purple-100 font-bold">
                                                     <span class="truncate">{{ t('categories.' + item.categoryKey) }}</span>
                                                     <svg class="w-3 h-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                                 </div>
@@ -160,7 +160,7 @@
                                             <td class="py-2.5 pr-2"><input type="text" v-model="item.item" class="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl focus:bg-white focus:ring-2 focus:ring-purple-400 outline-none transition-all shadow-sm text-purple-950 dark:text-purple-100 font-bold"></td>
                                             <!-- 頻率下拉選單觸發按鈕 -->
                                             <td class="py-2.5 pr-2">
-                                                <div :ref="el => setCellRef(item.id, 'freq', el)" @click.stop="toggleDropdown(item.id, 'freq', $event)" class="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl cursor-pointer flex justify-between items-center hover:bg-white shadow-sm text-purple-950 dark:text-purple-100 font-bold">
+                                                <div @click.stop="toggleDropdown(item.id, 'freq', $event, 'wants')" class="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl cursor-pointer flex justify-between items-center hover:bg-white shadow-sm text-purple-950 dark:text-purple-100 font-bold">
                                                     <span>{{ t('freqs.' + item.freqKey) }}</span>
                                                     <svg class="w-3 h-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                                 </div>
@@ -289,17 +289,17 @@
         </div>
     </div>
 
-    <!-- 獨立渲染在 Body 層級的絕對固定定位下拉選單 (徹底解決被卡住的問題) -->
+    <!-- 改用 v-show 搭配 @click.stop，讓 transition 動畫完美生效且點擊內部不會誤觸關閉 -->
     <transition name="dropdown">
-        <div v-if="activeDropdown" :style="dropdownStyle" class="fixed z-[999999] bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-indigo-200 dark:border-indigo-800 rounded-xl shadow-2xl overflow-hidden py-1">
+        <div v-show="activeDropdown" @click.stop :style="dropdownStyle" class="fixed z-[999999] bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-indigo-200 dark:border-indigo-800 rounded-xl shadow-2xl overflow-hidden py-1">
             <!-- 類別選項 -->
-            <template v-if="activeDropdown.type === 'cat'">
+            <template v-if="activeDropdown && activeDropdown.type === 'cat'">
                 <div v-for="c in categories" @click="selectCategory(c)" class="px-4 py-3 hover:bg-indigo-100 dark:hover:bg-indigo-900 cursor-pointer text-indigo-950 dark:text-indigo-100 font-bold transition-colors">
                     {{ t('categories.' + c) }}
                 </div>
             </template>
             <!-- 頻率選項 -->
-            <template v-else-if="activeDropdown.type === 'freq'">
+            <template v-else-if="activeDropdown && activeDropdown.type === 'freq'">
                 <div v-for="(val, key) in freqMap" @click="selectFreq(key)" class="px-4 py-3 hover:bg-indigo-100 dark:hover:bg-indigo-900 cursor-pointer text-indigo-950 dark:text-indigo-100 font-bold transition-colors">
                     {{ t('freqs.' + key) }}
                 </div>
