@@ -55,7 +55,7 @@ const messages = {
         },
         categories: { food: '🍔 Food', clothing: '👕 Cloth', housing: '🏠 House', transport: '🚗 Trans', education: '📚 Edu', fun: '🎮 Fun', medical: '💊 Med', misc: '🎁 Misc', tax: '📄 Tax' },
         freqs: { day: 'Day', week: 'Week', month: 'Month', bimonth: 'Bi-Mo', quarter: 'Qtr', year: 'Year' },
-        units: { age: 'yo', currency: 'NT$', year: 'Yrs' },
+        units: { age: 'yo', currency: '$', year: 'Yrs' }, // 將原本的 NT$ 統一改為簡潔的 $
         fireGuide: {
             title: 'Guide & Scenario Examples',
             expand: 'Show Guide', collapse: 'Hide Guide',
@@ -63,7 +63,7 @@ const messages = {
             step2Title: 'Yield Rate (R)', step2Desc: 'Expected return rate during retirement. Historically 4% ~ 5% is safe.',
             step3Title: 'Market Return (r)', step3Desc: 'Expected return on index ETFs (e.g., VOO/VT) during accumulation phase, typically ~7% - 8%.',
             exampleTitle: 'Example: 28yo Alex targets FIRE at 55',
-            exampleDesc: 'Current savings $600k NTD, life expectancy 80yo. Desired retirement spending $70k/mo ($840k/yr). Market return 7%, yield 5%. Required monthly saving is only $9,093 NTD!',
+            exampleDesc: 'Current savings $600k, life expectancy 80yo. Desired retirement spending $70k/mo ($840k/yr). Market return 7%, yield 5%. Required monthly saving is only $9,093!',
             loadExampleBtn: 'Load Example Scenario'
         },
         fire: {
