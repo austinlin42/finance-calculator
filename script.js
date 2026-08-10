@@ -1,4 +1,4 @@
-const { createApp, ref, computed } = Vue;
+const { createApp, ref, computed, onMounted, onUnmounted } = Vue;
 
 const messages = {
     zh: {
@@ -12,7 +12,7 @@ const messages = {
         },
         refDesc: {
             food: '三餐/聚餐', clothing: '衣物/保養', housing: '水電/房租', transport: '通勤/油資',
-            education: '學費/書籍', fun: '影音/旅遊', medical: '就醫/保健', tax: '所得/保險'
+            education: '學費/書籍', fun: '影音/旅遊', medical: '就醫/保健', misc: '禮物/雜項', tax: '所得/保險'
         },
         categories: { food: '🍔 食', clothing: '👕 衣', housing: '🏠 住', transport: '🚗 行', education: '📚 育', fun: '🎮 樂', medical: '💊 醫', misc: '🎁 雜', tax: '📄 稅' },
         freqs: { day: '日', week: '週', month: '月', bimonth: '雙月', quarter: '季', year: '年' },
@@ -41,7 +41,7 @@ const messages = {
         },
         refDesc: {
             food: 'Meals', clothing: 'Apparel', housing: 'Rent/Utilities', transport: 'Commute',
-            education: 'Tuition/Books', fun: 'Travel/Media', medical: 'Healthcare', tax: 'Tax/Insurance'
+            education: 'Tuition/Books', fun: 'Travel/Media', medical: 'Healthcare', misc: 'Gifts/Misc', tax: 'Tax/Insurance'
         },
         categories: { food: '🍔 Food', clothing: '👕 Cloth', housing: '🏠 House', transport: '🚗 Trans', education: '📚 Edu', fun: '🎮 Fun', medical: '💊 Med', misc: '🎁 Misc', tax: '📄 Tax' },
         freqs: { day: 'Day', week: 'Week', month: 'Month', bimonth: 'Bi-Mo', quarter: 'Qtr', year: 'Year' },
@@ -67,6 +67,7 @@ createApp({
         const format = (num) => isNaN(num) || num < 0 ? '0' : Math.round(num).toLocaleString('en-US');
         const generateId = () => Math.random().toString(36).substring(2, 9);
 
+        // 深淺色
         const isDark = ref(false);
         const toggleTheme = () => {
             isDark.value = !isDark.value;
@@ -74,17 +75,26 @@ createApp({
             else document.documentElement.classList.remove('dark');
         };
 
+        // 語系
         const lang = ref('zh');
         const toggleLang = () => { lang.value = lang.value === 'zh' ? 'en' : 'zh'; };
         const t = (path) => {
             return path.split('.').reduce((obj, key) => obj && obj[key], messages[lang.value]) || path;
         };
 
+        // Tab 切換 (確保關閉殘留選單)
+        const switchTab = (tab) => {
+            closeDropdown();
+            currentTab.value = tab;
+        };
+
+        // --- 全域絕對定位下拉選單邏輯 ---
         const activeDropdown = ref(null);
         const dropdownStyle = ref({});
+
         const toggleDropdown = (id, type, event, targetType = 'needs') => {
             if (activeDropdown.value && activeDropdown.value.id === id && activeDropdown.value.type === type) {
-                activeDropdown.value = null;
+                closeDropdown();
                 return;
             }
             const el = event.currentTarget;
@@ -99,7 +109,28 @@ createApp({
             activeDropdown.value = { id, type, targetType };
         };
 
-        const closeDropdown = () => { activeDropdown.value = null; };
+        const closeDropdown = () => {
+            activeDropdown.value = null;
+        };
+
+        // 全域點擊監聽：點擊非觸發按鈕或選單內部時強制關閉
+        const handleGlobalClick = (e) => {
+            if (activeDropdown.value) {
+                const isTrigger = e.target.closest('.dropdown-trigger');
+                const isMenu = e.target.closest('.dropdown-menu');
+                if (!isTrigger && !isMenu) {
+                    closeDropdown();
+                }
+            }
+        };
+
+        onMounted(() => {
+            document.addEventListener('click', handleGlobalClick);
+        });
+
+        onUnmounted(() => {
+            document.removeEventListener('click', handleGlobalClick);
+        });
 
         const selectCategory = (c) => {
             if (!activeDropdown.value) return;
@@ -167,7 +198,7 @@ createApp({
         });
 
         return {
-            currentTab, format, generateId,
+            currentTab, switchTab, format, generateId,
             isDark, toggleTheme, lang, toggleLang, t,
             activeDropdown, dropdownStyle, toggleDropdown, closeDropdown, selectCategory, selectFreq,
             categories, freqMap, needs, wants, totalNeeds, totalWants,
