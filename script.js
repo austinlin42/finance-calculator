@@ -17,6 +17,16 @@ const messages = {
         categories: { food: '🍔 食', clothing: '👕 衣', housing: '🏠 住', transport: '🚗 行', education: '📚 育', fun: '🎮 樂', medical: '💊 醫', misc: '🎁 雜', tax: '📄 稅' },
         freqs: { day: '日', week: '週', month: '月', bimonth: '雙月', quarter: '季', year: '年' },
         units: { age: '歲', currency: '元', year: '年' },
+        fireGuide: {
+            title: '使用說明與情境範例 Guide & Examples',
+            expand: '展開指南', collapse: '收起指南',
+            step1Title: '設定年齡與年花費', step1Desc: '填入目前與預計退休年齡，並估算退休後每年生活費（可參考工具一的總預算）。',
+            step2Title: '預期殖利率 (R)', step2Desc: '退休後提領資產的年化回報率，歷史經驗約填 4% ~ 5%（安全提領率）。',
+            step3Title: '大盤年化報酬 (r)', step3Desc: '退休前累積期投資大盤ETF（如 VT/VOO）的預期年化報酬率，歷史平均約填 7% ~ 8%。',
+            exampleTitle: '實例：28 歲小明目標 55 歲退休',
+            exampleDesc: '目前資產 60 萬元，預計活到 80 歲，退休後每月花費 7 萬元（每年 84 萬）。大盤報酬 7%、退休殖利率 5%。算出來每月需定期定額投入 $9,093 元即可達標！',
+            loadExampleBtn: '帶入此範例數據'
+        },
         fire: {
             goalTitle: '目標設定', planTitle: 'Plan (達成計畫)',
             currentAge: '我今年幾歲', fireAge: '預計FIRE退休年齡', deathAge: '預計活到幾歲', annualWithdraw: '退休後每年提領',
@@ -46,6 +56,16 @@ const messages = {
         categories: { food: '🍔 Food', clothing: '👕 Cloth', housing: '🏠 House', transport: '🚗 Trans', education: '📚 Edu', fun: '🎮 Fun', medical: '💊 Med', misc: '🎁 Misc', tax: '📄 Tax' },
         freqs: { day: 'Day', week: 'Week', month: 'Month', bimonth: 'Bi-Mo', quarter: 'Qtr', year: 'Year' },
         units: { age: 'yo', currency: 'NT$', year: 'Yrs' },
+        fireGuide: {
+            title: 'Guide & Scenario Examples',
+            expand: 'Show Guide', collapse: 'Hide Guide',
+            step1Title: 'Set Age & Withdrawal', step1Desc: 'Enter current & retirement age. Estimate annual retirement expenses (refer to Budget Tool).',
+            step2Title: 'Yield Rate (R)', step2Desc: 'Expected return rate during retirement. Historically 4% ~ 5% is safe.',
+            step3Title: 'Market Return (r)', step3Desc: 'Expected return on index ETFs (e.g., VOO/VT) during accumulation phase, typically ~7% - 8%.',
+            exampleTitle: 'Example: 28yo Alex targets FIRE at 55',
+            exampleDesc: 'Current savings $600k NTD, life expectancy 80yo. Desired retirement spending $70k/mo ($840k/yr). Market return 7%, yield 5%. Required monthly saving is only $9,093 NTD!',
+            loadExampleBtn: 'Load Example Scenario'
+        },
         fire: {
             goalTitle: 'Goal Settings', planTitle: 'Plan',
             currentAge: 'Current Age', fireAge: 'Target FIRE Age', deathAge: 'Life Expectancy', annualWithdraw: 'Annual Withdrawal',
@@ -82,13 +102,27 @@ createApp({
             return path.split('.').reduce((obj, key) => obj && obj[key], messages[lang.value]) || path;
         };
 
-        // Tab 切換 (確保關閉殘留選單)
+        // Tab 切換
         const switchTab = (tab) => {
             closeDropdown();
             currentTab.value = tab;
         };
 
-        // --- 全域絕對定位下拉選單邏輯 ---
+        // FIRE 指南開關與資料帶入
+        const showFireGuide = ref(false);
+        const loadFireExample = () => {
+            fire.value = {
+                currentAge: 28,
+                fireAge: 55,
+                deathAge: 80,
+                annualWithdraw: 840000,
+                currentSavings: 600000,
+                yieldRate: 5.0,
+                investReturn: 7.0
+            };
+        };
+
+        // 下拉選單邏輯
         const activeDropdown = ref(null);
         const dropdownStyle = ref({});
 
@@ -109,11 +143,8 @@ createApp({
             activeDropdown.value = { id, type, targetType };
         };
 
-        const closeDropdown = () => {
-            activeDropdown.value = null;
-        };
+        const closeDropdown = () => { activeDropdown.value = null; };
 
-        // 全域點擊監聽：點擊非觸發按鈕或選單內部時強制關閉
         const handleGlobalClick = (e) => {
             if (activeDropdown.value) {
                 const isTrigger = e.target.closest('.dropdown-trigger');
@@ -124,13 +155,8 @@ createApp({
             }
         };
 
-        onMounted(() => {
-            document.addEventListener('click', handleGlobalClick);
-        });
-
-        onUnmounted(() => {
-            document.removeEventListener('click', handleGlobalClick);
-        });
+        onMounted(() => { document.addEventListener('click', handleGlobalClick); });
+        onUnmounted(() => { document.removeEventListener('click', handleGlobalClick); });
 
         const selectCategory = (c) => {
             if (!activeDropdown.value) return;
@@ -164,7 +190,7 @@ createApp({
         const totalNeeds = computed(() => needs.value.reduce((acc, cur) => acc + (Math.max(0, cur.amount) * freqMap[cur.freqKey]), 0));
         const totalWants = computed(() => wants.value.reduce((acc, cur) => acc + (Math.max(0, cur.amount) * freqMap[cur.freqKey]), 0));
 
-        const fire = ref({ currentAge: 30, fireAge: 55, yieldRate: 5.0, annualWithdraw: 840000, deathAge: 80, currentSavings: 600000, investReturn: 7.0 });
+        const fire = ref({ currentAge: 28, fireAge: 55, yieldRate: 5.0, annualWithdraw: 840000, deathAge: 80, currentSavings: 600000, investReturn: 7.0 });
         const fireErrors = computed(() => {
             const errs = {};
             if (fire.value.fireAge <= fire.value.currentAge) errs.age = 'Invalid Age';
@@ -200,6 +226,7 @@ createApp({
         return {
             currentTab, switchTab, format, generateId,
             isDark, toggleTheme, lang, toggleLang, t,
+            showFireGuide, loadFireExample,
             activeDropdown, dropdownStyle, toggleDropdown, closeDropdown, selectCategory, selectFreq,
             categories, freqMap, needs, wants, totalNeeds, totalWants,
             fire, fireErrors, fireCalc, regular, regularCalc
