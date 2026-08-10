@@ -42,7 +42,7 @@
                 <!-- 工具一：預算規劃工具 -->
                 <div v-if="currentTab === 'budget'" key="budget" class="space-y-6 md:space-y-8">
                     
-                    <!-- Reference Guide (已刪除重複的 Emoji) -->
+                    <!-- Reference Guide -->
                     <div class="bg-white/60 dark:bg-black/50 backdrop-blur-xl border border-white/80 dark:border-white/10 p-4 md:p-5 rounded-2xl flex flex-col md:flex-row gap-4 items-start md:items-center text-sm shadow-sm">
                         <div class="font-bold text-indigo-900 dark:text-indigo-200 text-base shrink-0 flex items-center gap-2">
                             <span class="bg-yellow-400/30 text-yellow-700 dark:text-yellow-400 rounded-full w-6 h-6 flex items-center justify-center font-black">i</span>
@@ -175,7 +175,7 @@
                     </div>
                 </div>
 
-                <!-- 工具二：財富自由計算機 (FIRE) - 修復 Padding 防止與單位重疊 -->
+                <!-- 工具二：財富自由計算機 (FIRE) -->
                 <div v-else-if="currentTab === 'fire'" key="fire" class="space-y-6">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
                         <div class="bg-white/50 dark:bg-black/40 backdrop-blur-xl border border-white/80 dark:border-white/10 p-6 md:p-8 rounded-[1.5rem] shadow-sm flex flex-col justify-between">
@@ -281,9 +281,9 @@
         </div>
     </div>
 
-    <!-- 獨立渲染下拉選單，阻擋事件冒泡並加上選單內部標識類別 -->
+    <!-- 獨立渲染下拉選單：加上 global-dropdown-menu 類別確保層級全網最高 -->
     <transition name="dropdown">
-        <div v-show="activeDropdown" @click.stop :style="dropdownStyle" class="dropdown-menu fixed z-[999999] bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-indigo-200 dark:border-indigo-800 rounded-xl shadow-2xl overflow-hidden py-1">
+        <div v-show="activeDropdown" @click.stop :style="dropdownStyle" class="dropdown-menu global-dropdown-menu bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-indigo-200 dark:border-indigo-800 rounded-xl overflow-hidden py-1">
             <template v-if="activeDropdown && activeDropdown.type === 'cat'">
                 <div v-for="c in categories" :key="c" @click="selectCategory(c)" class="px-4 py-3 hover:bg-indigo-100 dark:hover:bg-indigo-900 cursor-pointer text-indigo-950 dark:text-indigo-100 font-bold transition-colors">
                     {{ t('categories.' + c) }}
