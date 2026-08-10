@@ -50,14 +50,14 @@
                         </div>
                         <div class="w-px h-8 bg-indigo-200/50 hidden md:block"></div>
                         <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-2 w-full text-gray-700 dark:text-gray-300 font-medium">
-                            <div class="flex items-center gap-2"><span class="bg-indigo-100/60 dark:bg-indigo-900/60 p-1 rounded px-2">🍔 食</span><span class="text-xs opacity-80">三餐/聚餐</span></div>
-                            <div class="flex items-center gap-2"><span class="bg-indigo-100/60 dark:bg-indigo-900/60 p-1 rounded px-2">👕 衣</span><span class="text-xs opacity-80">衣物/保養</span></div>
-                            <div class="flex items-center gap-2"><span class="bg-indigo-100/60 dark:bg-indigo-900/60 p-1 rounded px-2">🏠 住</span><span class="text-xs opacity-80">水電/房租</span></div>
-                            <div class="flex items-center gap-2"><span class="bg-indigo-100/60 dark:bg-indigo-900/60 p-1 rounded px-2">🚗 行</span><span class="text-xs opacity-80">通勤/油資</span></div>
-                            <div class="flex items-center gap-2"><span class="bg-indigo-100/60 dark:bg-indigo-900/60 p-1 rounded px-2">📚 育</span><span class="text-xs opacity-80">學費/書籍</span></div>
-                            <div class="flex items-center gap-2"><span class="bg-indigo-100/60 dark:bg-indigo-900/60 p-1 rounded px-2">🎮 樂</span><span class="text-xs opacity-80">影音/旅遊</span></div>
-                            <div class="flex items-center gap-2"><span class="bg-indigo-100/60 dark:bg-indigo-900/60 p-1 rounded px-2">💊 醫</span><span class="text-xs opacity-80">就醫/保健</span></div>
-                            <div class="flex items-center gap-2"><span class="bg-indigo-100/60 dark:bg-indigo-900/60 p-1 rounded px-2">📄 稅</span><span class="text-xs opacity-80">所得/保險</span></div>
+                            <div class="flex items-center gap-2"><span class="bg-indigo-100/60 dark:bg-indigo-900/60 p-1 rounded px-2">🍔 {{ t('categories.food') }}</span><span class="text-xs opacity-80">{{ t('refDesc.food') }}</span></div>
+                            <div class="flex items-center gap-2"><span class="bg-indigo-100/60 dark:bg-indigo-900/60 p-1 rounded px-2">👕 {{ t('categories.clothing') }}</span><span class="text-xs opacity-80">{{ t('refDesc.clothing') }}</span></div>
+                            <div class="flex items-center gap-2"><span class="bg-indigo-100/60 dark:bg-indigo-900/60 p-1 rounded px-2">🏠 {{ t('categories.housing') }}</span><span class="text-xs opacity-80">{{ t('refDesc.housing') }}</span></div>
+                            <div class="flex items-center gap-2"><span class="bg-indigo-100/60 dark:bg-indigo-900/60 p-1 rounded px-2">🚗 {{ t('categories.transport') }}</span><span class="text-xs opacity-80">{{ t('refDesc.transport') }}</span></div>
+                            <div class="flex items-center gap-2"><span class="bg-indigo-100/60 dark:bg-indigo-900/60 p-1 rounded px-2">📚 {{ t('categories.education') }}</span><span class="text-xs opacity-80">{{ t('refDesc.education') }}</span></div>
+                            <div class="flex items-center gap-2"><span class="bg-indigo-100/60 dark:bg-indigo-900/60 p-1 rounded px-2">🎮 {{ t('categories.fun') }}</span><span class="text-xs opacity-80">{{ t('refDesc.fun') }}</span></div>
+                            <div class="flex items-center gap-2"><span class="bg-indigo-100/60 dark:bg-indigo-900/60 p-1 rounded px-2">💊 {{ t('categories.medical') }}</span><span class="text-xs opacity-80">{{ t('refDesc.medical') }}</span></div>
+                            <div class="flex items-center gap-2"><span class="bg-indigo-100/60 dark:bg-indigo-900/60 p-1 rounded px-2">📄 {{ t('categories.tax') }}</span><span class="text-xs opacity-80">{{ t('refDesc.tax') }}</span></div>
                         </div>
                     </div>
 
@@ -102,7 +102,6 @@
                                     </thead>
                                     <transition-group name="list" tag="tbody">
                                         <tr v-for="(item, index) in needs" :key="item.id" class="border-b border-indigo-100/40 dark:border-indigo-900/30 group">
-                                            <!-- 類別下拉選單觸發按鈕 -->
                                             <td class="py-2.5 pr-2">
                                                 <div @click.stop="toggleDropdown(item.id, 'cat', $event, 'needs')" class="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl cursor-pointer flex justify-between items-center hover:bg-white shadow-sm text-indigo-950 dark:text-indigo-100 font-bold">
                                                     <span class="truncate">{{ t('categories.' + item.categoryKey) }}</span>
@@ -110,7 +109,6 @@
                                                 </div>
                                             </td>
                                             <td class="py-2.5 pr-2"><input type="text" v-model="item.item" class="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all shadow-sm text-indigo-950 dark:text-indigo-100 font-bold"></td>
-                                            <!-- 頻率下拉選單觸發按鈕 -->
                                             <td class="py-2.5 pr-2">
                                                 <div @click.stop="toggleDropdown(item.id, 'freq', $event, 'needs')" class="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl cursor-pointer flex justify-between items-center hover:bg-white shadow-sm text-indigo-950 dark:text-indigo-100 font-bold">
                                                     <span>{{ t('freqs.' + item.freqKey) }}</span>
@@ -150,7 +148,6 @@
                                     </thead>
                                     <transition-group name="list" tag="tbody">
                                         <tr v-for="(item, index) in wants" :key="item.id" class="border-b border-purple-100/40 dark:border-purple-900/30 group">
-                                            <!-- 類別下拉選單觸發按鈕 -->
                                             <td class="py-2.5 pr-2">
                                                 <div @click.stop="toggleDropdown(item.id, 'cat', $event, 'wants')" class="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl cursor-pointer flex justify-between items-center hover:bg-white shadow-sm text-purple-950 dark:text-purple-100 font-bold">
                                                     <span class="truncate">{{ t('categories.' + item.categoryKey) }}</span>
@@ -158,7 +155,6 @@
                                                 </div>
                                             </td>
                                             <td class="py-2.5 pr-2"><input type="text" v-model="item.item" class="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl focus:bg-white focus:ring-2 focus:ring-purple-400 outline-none transition-all shadow-sm text-purple-950 dark:text-purple-100 font-bold"></td>
-                                            <!-- 頻率下拉選單觸發按鈕 -->
                                             <td class="py-2.5 pr-2">
                                                 <div @click.stop="toggleDropdown(item.id, 'freq', $event, 'wants')" class="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl cursor-pointer flex justify-between items-center hover:bg-white shadow-sm text-purple-950 dark:text-purple-100 font-bold">
                                                     <span>{{ t('freqs.' + item.freqKey) }}</span>
@@ -188,40 +184,40 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
                         <div class="bg-white/50 dark:bg-black/40 backdrop-blur-xl border border-white/80 dark:border-white/10 p-6 md:p-8 rounded-[1.5rem] shadow-sm flex flex-col justify-between">
                             <div>
-                                <h3 class="text-lg font-bold border-b border-indigo-200/50 pb-3 mb-5 text-indigo-950 dark:text-indigo-200">目標設定</h3>
+                                <h3 class="text-lg font-bold border-b border-indigo-200/50 pb-3 mb-5 text-indigo-950 dark:text-indigo-200">{{ t('fire.goalTitle') }}</h3>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
                                     <div>
-                                        <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-200 mb-2">我今年幾歲</label>
-                                        <div class="relative"><input type="number" min="0" v-model="fire.currentAge" class="w-full p-3.5 pr-8 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">歲</span></div>
+                                        <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-200 mb-2">{{ t('fire.currentAge') }}</label>
+                                        <div class="relative"><input type="number" min="0" v-model="fire.currentAge" class="w-full p-3.5 pr-10 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">{{ t('units.age') }}</span></div>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-200 mb-2">預計FIRE退休年齡</label>
-                                        <div class="relative"><input type="number" min="0" v-model="fire.fireAge" class="w-full p-3.5 pr-8 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">歲</span></div>
+                                        <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-200 mb-2">{{ t('fire.fireAge') }}</label>
+                                        <div class="relative"><input type="number" min="0" v-model="fire.fireAge" class="w-full p-3.5 pr-10 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">{{ t('units.age') }}</span></div>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-200 mb-2">預計活到幾歲</label>
-                                        <div class="relative"><input type="number" min="0" v-model="fire.deathAge" class="w-full p-3.5 pr-8 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">歲</span></div>
+                                        <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-200 mb-2">{{ t('fire.deathAge') }}</label>
+                                        <div class="relative"><input type="number" min="0" v-model="fire.deathAge" class="w-full p-3.5 pr-10 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">{{ t('units.age') }}</span></div>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-200 mb-2">退休後每年提領</label>
-                                        <div class="relative"><input type="number" min="0" v-model="fire.annualWithdraw" class="w-full p-3.5 pr-8 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">元</span></div>
+                                        <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-200 mb-2">{{ t('fire.annualWithdraw') }}</label>
+                                        <div class="relative"><input type="number" min="0" v-model="fire.annualWithdraw" class="w-full p-3.5 pr-10 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">{{ t('units.currency') }}</span></div>
                                     </div>
                                 </div>
                             </div>
                             <div>
-                                <h3 class="text-lg font-bold border-b border-indigo-200/50 pb-3 mb-5 text-indigo-950 dark:text-indigo-200">Plan (達成計畫)</h3>
+                                <h3 class="text-lg font-bold border-b border-indigo-200/50 pb-3 mb-5 text-indigo-950 dark:text-indigo-200">{{ t('fire.planTitle') }}</h3>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                     <div>
-                                        <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-200 mb-2">目前已備資產</label>
-                                        <div class="relative"><input type="number" min="0" v-model="fire.currentSavings" class="w-full p-3.5 pr-8 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">元</span></div>
+                                        <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-200 mb-2">{{ t('fire.currentSavings') }}</label>
+                                        <div class="relative"><input type="number" min="0" v-model="fire.currentSavings" class="w-full p-3.5 pr-10 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">{{ t('units.currency') }}</span></div>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-200 mb-2">預期殖利率 (R)</label>
-                                        <div class="relative"><input type="number" min="0" step="0.1" v-model="fire.yieldRate" class="w-full p-3.5 pr-8 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">%</span></div>
+                                        <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-200 mb-2">{{ t('fire.yieldRate') }}</label>
+                                        <div class="relative"><input type="number" min="0" step="0.1" v-model="fire.yieldRate" class="w-full p-3.5 pr-10 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">%</span></div>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-200 mb-2">大盤年化報酬 (r)</label>
-                                        <div class="relative"><input type="number" min="0" step="0.1" v-model="fire.investReturn" class="w-full p-3.5 pr-8 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">%</span></div>
+                                        <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-200 mb-2">{{ t('fire.investReturn') }}</label>
+                                        <div class="relative"><input type="number" min="0" step="0.1" v-model="fire.investReturn" class="w-full p-3.5 pr-10 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100"><span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">%</span></div>
                                     </div>
                                 </div>
                             </div>
@@ -230,21 +226,21 @@
                         <!-- 結算區 -->
                         <div class="space-y-6 flex flex-col justify-center">
                             <div class="bg-white/70 dark:bg-black/50 backdrop-blur-2xl border p-6 md:p-8 rounded-[1.5rem] shadow-sm">
-                                <h4 class="text-sm font-black text-blue-700 dark:text-blue-400 mb-2 uppercase">財富自由需要累積</h4>
+                                <h4 class="text-sm font-black text-blue-700 dark:text-blue-400 mb-2 uppercase">{{ t('fire.targetHeader') }}</h4>
                                 <div class="text-3xl md:text-5xl font-black text-indigo-950 dark:text-indigo-100 mb-4">${{ format(fireCalc.target) }}</div>
                                 <div class="font-mono bg-white/80 dark:bg-black/40 p-4 rounded-xl text-xs font-bold text-indigo-950 dark:text-indigo-200">
-                                    <p class="font-black mb-1">公式推導 (期初現值):</p>
+                                    <p class="font-black mb-1">{{ t('fire.formulaPV') }}</p>
                                     <p>PV = (1 - (1+R)^-N) / R = {{ fireCalc.pvFactor.toFixed(2) }}</p>
-                                    <p>目標 = 每年提領 × (1+R) × PV</p>
+                                    <p>{{ t('fire.targetDesc') }}</p>
                                 </div>
                             </div>
                             <div class="bg-white/70 dark:bg-black/50 backdrop-blur-2xl border p-6 md:p-8 rounded-[1.5rem] shadow-sm">
-                                <h4 class="text-sm font-black text-purple-700 dark:text-purple-400 mb-2 uppercase">計畫（每月需定期定額）</h4>
+                                <h4 class="text-sm font-black text-purple-700 dark:text-purple-400 mb-2 uppercase">{{ t('fire.planHeader') }}</h4>
                                 <div class="text-3xl md:text-5xl font-black text-purple-950 dark:text-purple-100 mb-4">${{ format(fireCalc.monthlyNeeded) }}</div>
                                 <div class="font-mono bg-white/80 dark:bg-black/40 p-4 rounded-xl text-xs font-bold text-purple-950 dark:text-purple-200">
-                                    <p class="font-black mb-1">公式推導 (年金終值):</p>
-                                    <p>FV = ((1+月利率)^n - 1) / 月利率 = {{ fireCalc.fvFactor.toFixed(2) }}</p>
-                                    <p>每月需存 = 資金缺口 / FV</p>
+                                    <p class="font-black mb-1">{{ t('fire.formulaFV') }}</p>
+                                    <p>FV = ((1+Mo.Rate)^n - 1) / Mo.Rate = {{ fireCalc.fvFactor.toFixed(2) }}</p>
+                                    <p>{{ t('fire.planDesc') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -255,30 +251,30 @@
                 <div v-else-if="currentTab === 'regular'" key="regular" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
                         <div class="bg-white/50 dark:bg-black/40 backdrop-blur-xl border border-white/80 dark:border-white/10 p-6 md:p-10 rounded-[1.5rem] shadow-sm flex flex-col justify-center">
-                            <h3 class="text-xl font-bold border-b border-indigo-200/50 pb-4 mb-6 text-indigo-950 dark:text-indigo-200">參數設定</h3>
+                            <h3 class="text-xl font-bold border-b border-indigo-200/50 pb-4 mb-6 text-indigo-950 dark:text-indigo-200">{{ t('regular.paramsTitle') }}</h3>
                             <div class="space-y-6">
                                 <div>
-                                    <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-300 mb-2">每月定期定額投入</label>
-                                    <div class="relative"><input type="number" min="0" v-model="regular.monthly" class="w-full p-4 pr-10 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100 text-lg"><span class="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">元</span></div>
+                                    <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-300 mb-2">{{ t('regular.monthlyInvest') }}</label>
+                                    <div class="relative"><input type="number" min="0" v-model="regular.monthly" class="w-full p-4 pr-12 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100 text-lg"><span class="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">{{ t('units.currency') }}</span></div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-300 mb-2">預期年化報酬率 (r%)</label>
-                                    <div class="relative"><input type="number" min="0" step="0.1" v-model="regular.rate" class="w-full p-4 pr-10 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100 text-lg"><span class="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">%</span></div>
+                                    <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-300 mb-2">{{ t('regular.annualRate') }}</label>
+                                    <div class="relative"><input type="number" min="0" step="0.1" v-model="regular.rate" class="w-full p-4 pr-12 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100 text-lg"><span class="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">%</span></div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-300 mb-2">預計持續年數 (n)</label>
-                                    <div class="relative"><input type="number" min="0" v-model="regular.years" class="w-full p-4 pr-10 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100 text-lg"><span class="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">年</span></div>
+                                    <label class="block text-sm font-bold text-indigo-950 dark:text-indigo-300 mb-2">{{ t('regular.years') }}</label>
+                                    <div class="relative"><input type="number" min="0" v-model="regular.years" class="w-full p-4 pr-12 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100 text-lg"><span class="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-600 font-bold">{{ t('units.year') }}</span></div>
                                 </div>
                             </div>
                         </div>
                         <div class="flex flex-col justify-center">
                             <div class="bg-gradient-to-br from-indigo-500 to-purple-600 dark:from-indigo-900 dark:to-purple-900 backdrop-blur-3xl border border-white/50 p-6 md:p-10 rounded-[1.5rem] shadow-xl text-center h-full flex flex-col justify-center relative overflow-hidden text-white">
-                                <h4 class="text-sm md:text-lg font-bold text-indigo-100 mb-2 uppercase">預期累積金額</h4>
+                                <h4 class="text-sm md:text-lg font-bold text-indigo-100 mb-2 uppercase">{{ t('regular.resultTitle') }}</h4>
                                 <div class="text-4xl md:text-6xl font-black mb-6 tracking-tight">${{ format(regularCalc.totalValue) }}</div>
                                 <div class="text-xs md:text-sm text-left font-mono bg-black/30 backdrop-blur-xl p-4 rounded-xl border border-white/20 text-indigo-100">
-                                    <strong class="text-white mb-2 block">公式推導 (年金終值 FV)：</strong>
-                                    <p>月利率 = {{ (regular.rate/12).toFixed(3) }}% | 總期數 = {{ regular.years * 12 }} 個月</p>
-                                    <p class="mt-2 font-bold">累積金額 = 每月投入 × 終值係數 ({{ regularCalc.fvFactor.toFixed(2) }})</p>
+                                    <strong class="text-white mb-2 block">{{ t('regular.formulaTitle') }}</strong>
+                                    <p>{{ t('regular.moRateText') }} = {{ (regular.rate/12).toFixed(3) }}% | {{ t('regular.totalPeriods') }} = {{ regular.years * 12 }} {{ t('regular.monthsText') }}</p>
+                                    <p class="mt-2 font-bold">{{ t('regular.formulaDesc') }} ({{ regularCalc.fvFactor.toFixed(2) }})</p>
                                 </div>
                             </div>
                         </div>
@@ -289,16 +285,14 @@
         </div>
     </div>
 
-    <!-- 改用 v-show 搭配 @click.stop，讓 transition 動畫完美生效且點擊內部不會誤觸關閉 -->
+    <!-- 下拉選單 -->
     <transition name="dropdown">
         <div v-show="activeDropdown" @click.stop :style="dropdownStyle" class="fixed z-[999999] bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-indigo-200 dark:border-indigo-800 rounded-xl shadow-2xl overflow-hidden py-1">
-            <!-- 類別選項 -->
             <template v-if="activeDropdown && activeDropdown.type === 'cat'">
                 <div v-for="c in categories" @click="selectCategory(c)" class="px-4 py-3 hover:bg-indigo-100 dark:hover:bg-indigo-900 cursor-pointer text-indigo-950 dark:text-indigo-100 font-bold transition-colors">
                     {{ t('categories.' + c) }}
                 </div>
             </template>
-            <!-- 頻率選項 -->
             <template v-else-if="activeDropdown && activeDropdown.type === 'freq'">
                 <div v-for="(val, key) in freqMap" @click="selectFreq(key)" class="px-4 py-3 hover:bg-indigo-100 dark:hover:bg-indigo-900 cursor-pointer text-indigo-950 dark:text-indigo-100 font-bold transition-colors">
                     {{ t('freqs.' + key) }}
