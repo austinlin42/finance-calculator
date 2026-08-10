@@ -177,6 +177,51 @@
 
                 <!-- 工具二：財富自由計算機 (FIRE) -->
                 <div v-else-if="currentTab === 'fire'" key="fire" class="space-y-6">
+                    
+                    <!-- 可展開的說明與情境範例卡片 -->
+                    <div class="bg-white/60 dark:bg-black/50 backdrop-blur-xl border border-white/80 dark:border-white/10 rounded-2xl p-4 md:p-5 shadow-sm transition-all">
+                        <div @click="showFireGuide = !showFireGuide" class="cursor-pointer flex justify-between items-center select-none">
+                            <div class="font-bold text-indigo-950 dark:text-indigo-200 text-base flex items-center gap-2">
+                                <span class="bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 rounded-full w-6 h-6 flex items-center justify-center font-black">?</span>
+                                {{ t('fireGuide.title') }}
+                            </div>
+                            <div class="text-xs font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1">
+                                <span>{{ showFireGuide ? t('fireGuide.collapse') : t('fireGuide.expand') }}</span>
+                                <svg class="w-4 h-4 transition-transform duration-300" :class="{'rotate-180': showFireGuide}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
+                        
+                        <transition name="page">
+                            <div v-show="showFireGuide" class="mt-4 pt-4 border-t border-indigo-100 dark:border-indigo-900/50 space-y-4 text-sm text-gray-700 dark:text-gray-300">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="bg-white/50 dark:bg-black/30 p-3.5 rounded-xl border border-indigo-50 dark:border-indigo-900/30">
+                                        <h5 class="font-bold text-indigo-900 dark:text-indigo-200 mb-1">1. {{ t('fireGuide.step1Title') }}</h5>
+                                        <p class="text-xs opacity-80 leading-relaxed">{{ t('fireGuide.step1Desc') }}</p>
+                                    </div>
+                                    <div class="bg-white/50 dark:bg-black/30 p-3.5 rounded-xl border border-indigo-50 dark:border-indigo-900/30">
+                                        <h5 class="font-bold text-indigo-900 dark:text-indigo-200 mb-1">2. {{ t('fireGuide.step2Title') }}</h5>
+                                        <p class="text-xs opacity-80 leading-relaxed">{{ t('fireGuide.step2Desc') }}</p>
+                                    </div>
+                                    <div class="bg-white/50 dark:bg-black/30 p-3.5 rounded-xl border border-indigo-50 dark:border-indigo-900/30">
+                                        <h5 class="font-bold text-indigo-900 dark:text-indigo-200 mb-1">3. {{ t('fireGuide.step3Title') }}</h5>
+                                        <p class="text-xs opacity-80 leading-relaxed">{{ t('fireGuide.step3Desc') }}</p>
+                                    </div>
+                                </div>
+
+                                <!-- 經典實力範例套用 -->
+                                <div class="bg-indigo-50/70 dark:bg-indigo-950/50 p-4 rounded-xl border border-indigo-200/60 dark:border-indigo-800/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                                    <div>
+                                        <div class="font-bold text-indigo-950 dark:text-indigo-100 text-sm mb-0.5">📌 {{ t('fireGuide.exampleTitle') }}</div>
+                                        <div class="text-xs opacity-90 leading-normal">{{ t('fireGuide.exampleDesc') }}</div>
+                                    </div>
+                                    <button @click="loadFireExample" class="whitespace-nowrap px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-xs shadow-sm transition-all shrink-0">
+                                        👉 {{ t('fireGuide.loadExampleBtn') }}
+                                    </button>
+                                </div>
+                            </div>
+                        </transition>
+                    </div>
+
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
                         <div class="bg-white/50 dark:bg-black/40 backdrop-blur-xl border border-white/80 dark:border-white/10 p-6 md:p-8 rounded-[1.5rem] shadow-sm flex flex-col justify-between">
                             <div>
@@ -281,7 +326,7 @@
         </div>
     </div>
 
-    <!-- 獨立渲染下拉選單：加上 global-dropdown-menu 類別確保層級全網最高 -->
+    <!-- 獨立渲染下拉選單 -->
     <transition name="dropdown">
         <div v-show="activeDropdown" @click.stop :style="dropdownStyle" class="dropdown-menu global-dropdown-menu bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-indigo-200 dark:border-indigo-800 rounded-xl overflow-hidden py-1">
             <template v-if="activeDropdown && activeDropdown.type === 'cat'">
