@@ -71,7 +71,7 @@ const format = (num) => isNaN(num) || num < 0 ? '0' : Math.round(num).toLocaleSt
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState('budget');
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true); // 預設暗色
   const [lang, setLang] = useState('zh');
 
   const t = (path) => {
@@ -157,16 +157,17 @@ export default function App() {
   }, [regular]);
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 md:space-y-8 mt-2 md:mt-4">
+    <div className="max-w-7xl mx-auto space-y-6 md:space-y-8 p-4 md:p-6 min-h-screen">
+      {/* 頂部選單與語系/主題按鈕 */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6 relative z-20">
         <div className="flex overflow-x-auto hide-scrollbar w-full md:w-auto pb-2 md:pb-0 order-2 md:order-1">
-          <div className="mx-auto md:mx-0 w-max bg-white/60 dark:bg-black/40 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-1.5 rounded-full flex flex-nowrap gap-1 shadow-sm">
+          <div className="mx-auto md:mx-0 w-max bg-white/60 dark:bg-slate-800/60 backdrop-blur-2xl border border-white/80 dark:border-slate-700/60 p-1.5 rounded-full flex flex-nowrap gap-1 shadow-sm">
             {['budget', 'fire', 'regular'].map(tab => (
               <button
                 key={tab}
                 onClick={() => { setActiveDropdown(null); setCurrentTab(tab); }}
                 className={`whitespace-nowrap px-5 md:px-6 py-2.5 rounded-full transition-all duration-300 text-sm md:text-base ${
-                  currentTab === tab ? 'bg-white dark:bg-white/20 shadow-sm text-indigo-800 dark:text-indigo-100 font-bold' : 'text-gray-600 dark:text-gray-400 hover:bg-white/50'
+                  currentTab === tab ? 'bg-white dark:bg-indigo-600/80 shadow-md text-indigo-900 dark:text-white font-bold' : 'text-gray-600 dark:text-slate-300 hover:bg-white/50 dark:hover:bg-slate-700/50'
                 }`}
               >
                 {t(`tabs.${tab}`)}
@@ -176,46 +177,49 @@ export default function App() {
         </div>
 
         <div className="flex gap-3 order-1 md:order-2 w-full md:w-auto justify-end px-2 md:px-0">
-          <button onClick={() => setLang(l => l === 'zh' ? 'en' : 'zh')} className="w-10 h-10 rounded-full bg-white/60 dark:bg-black/40 backdrop-blur-md border border-white/80 dark:border-white/10 flex items-center justify-center shadow-sm hover:scale-105 transition-transform text-sm font-bold text-indigo-900 dark:text-indigo-200">
+          <button onClick={() => setLang(l => l === 'zh' ? 'en' : 'zh')} className="w-10 h-10 rounded-full bg-white/60 dark:bg-slate-800/60 backdrop-blur-md border border-white/80 dark:border-slate-700/60 flex items-center justify-center shadow-sm hover:scale-105 transition-transform text-sm font-bold text-indigo-900 dark:text-indigo-200">
             {lang === 'zh' ? 'EN' : '中'}
           </button>
-          <button onClick={() => setIsDark(d => !d)} className="w-10 h-10 rounded-full bg-white/60 dark:bg-black/40 backdrop-blur-md border border-white/80 dark:border-white/10 flex items-center justify-center shadow-sm hover:scale-105 transition-transform text-indigo-900 dark:text-indigo-200">
+          <button onClick={() => setIsDark(d => !d)} className="w-10 h-10 rounded-full bg-white/60 dark:bg-slate-800/60 backdrop-blur-md border border-white/80 dark:border-slate-700/60 flex items-center justify-center shadow-sm hover:scale-105 transition-transform text-indigo-900 dark:text-indigo-200">
             {isDark ? '☀️' : '🌙'}
           </button>
         </div>
       </div>
 
-      <div className="bg-white/40 dark:bg-black/40 backdrop-blur-3xl border border-white/70 dark:border-white/10 shadow-xl rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-6 md:p-10 relative">
+      {/* 主面板容器 */}
+      <div className="bg-white/40 dark:bg-slate-900/50 backdrop-blur-3xl border border-white/70 dark:border-slate-700/50 shadow-2xl rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-6 md:p-10 relative">
         {currentTab === 'budget' && (
           <div className="space-y-6 md:space-y-8">
-            <div className="bg-white/60 dark:bg-black/50 backdrop-blur-xl border border-white/80 dark:border-white/10 p-4 md:p-5 rounded-2xl flex flex-col md:flex-row gap-4 items-start md:items-center text-sm shadow-sm">
-              <div className="font-bold text-indigo-900 dark:text-indigo-200 text-base shrink-0 flex items-center gap-2">
-                <span className="bg-yellow-400/30 text-yellow-700 dark:text-yellow-400 rounded-full w-6 h-6 flex items-center justify-center font-black">i</span>
+            {/* 參考指南 Banner */}
+            <div className="bg-white/60 dark:bg-slate-800/70 backdrop-blur-xl border border-white/80 dark:border-slate-700/60 p-4 md:p-5 rounded-2xl flex flex-col md:flex-row gap-4 items-start md:items-center text-sm shadow-sm">
+              <div className="font-bold text-indigo-900 dark:text-indigo-300 text-base shrink-0 flex items-center gap-2">
+                <span className="bg-yellow-400/30 text-yellow-700 dark:text-amber-300 rounded-full w-6 h-6 flex items-center justify-center font-black">i</span>
                 {t('budget.refTitle')}
               </div>
-              <div className="w-px h-8 bg-indigo-200/50 hidden md:block"></div>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-2 w-full text-gray-700 dark:text-gray-300 font-medium">
+              <div className="w-px h-8 bg-indigo-200/50 dark:bg-slate-700/60 hidden md:block"></div>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-2 w-full text-gray-700 dark:text-slate-200 font-medium">
                 {categories.map(c => (
                   <div key={c} className="flex items-center gap-2">
-                    <span className="bg-indigo-100/60 dark:bg-indigo-900/60 p-1 rounded px-2">{t(`categories.${c}`)}</span>
+                    <span className="bg-indigo-100/60 dark:bg-slate-700/80 p-1 rounded px-2">{t(`categories.${c}`)}</span>
                     <span className="text-xs opacity-80">{t(`refDesc.${c}`)}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="bg-white/60 dark:bg-black/50 backdrop-blur-3xl border border-white/80 dark:border-white/10 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] shadow-sm">
-              <h3 className="text-xl font-bold mb-6 text-center text-indigo-950 dark:text-indigo-100 bg-white/70 dark:bg-black/60 inline-block px-6 py-2 rounded-full border border-white/80 shadow-sm mx-auto flex w-max">{t('budget.summaryTitle')}</h3>
+            {/* 年度預算總結區塊 */}
+            <div className="bg-white/60 dark:bg-slate-800/50 backdrop-blur-3xl border border-white/80 dark:border-slate-700/60 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] shadow-sm">
+              <h3 className="text-xl font-bold mb-6 text-center text-indigo-950 dark:text-slate-100 bg-white/70 dark:bg-slate-800/80 inline-block px-6 py-2 rounded-full border border-white/80 dark:border-slate-700/60 shadow-sm mx-auto flex w-max">{t('budget.summaryTitle')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 text-center">
-                <div className="bg-white/70 dark:bg-black/40 border border-white/90 dark:border-white/10 p-5 md:p-6 rounded-2xl shadow-sm">
+                <div className="bg-white/70 dark:bg-slate-800/70 border border-white/90 dark:border-slate-700/50 p-5 md:p-6 rounded-2xl shadow-sm">
                   <div className="text-indigo-700 dark:text-indigo-300 font-bold text-sm mb-2">{t('budget.needs')}</div>
-                  <div className="text-3xl font-black text-indigo-900 dark:text-indigo-100">${format(totalNeeds)}</div>
+                  <div className="text-3xl font-black text-indigo-900 dark:text-white">${format(totalNeeds)}</div>
                 </div>
-                <div className="bg-white/70 dark:bg-black/40 border border-white/90 dark:border-white/10 p-5 md:p-6 rounded-2xl shadow-sm">
+                <div className="bg-white/70 dark:bg-slate-800/70 border border-white/90 dark:border-slate-700/50 p-5 md:p-6 rounded-2xl shadow-sm">
                   <div className="text-purple-700 dark:text-purple-300 font-bold text-sm mb-2">{t('budget.wants')}</div>
-                  <div className="text-3xl font-black text-purple-900 dark:text-purple-100">${format(totalWants)}</div>
+                  <div className="text-3xl font-black text-purple-900 dark:text-white">${format(totalWants)}</div>
                 </div>
-                <div className="bg-gradient-to-br from-indigo-500 to-purple-600 dark:from-indigo-700 dark:to-purple-800 p-5 md:p-6 rounded-2xl shadow-md text-white md:scale-105">
+                <div className="bg-gradient-to-br from-indigo-500 to-purple-600 dark:from-indigo-600 dark:to-purple-700 p-5 md:p-6 rounded-2xl shadow-lg text-white md:scale-105">
                   <div className="text-indigo-100 font-medium text-sm mb-1">{t('budget.totalBudget')}</div>
                   <div className="text-3xl md:text-4xl font-black mb-2">${format(totalNeeds + totalWants)}</div>
                   <div className="text-xs md:text-sm font-bold text-indigo-950 bg-white/90 inline-block px-3 py-1.5 rounded-full">{t('budget.monthlyAvg')}: ${format((totalNeeds + totalWants) / 12)}</div>
@@ -223,19 +227,20 @@ export default function App() {
               </div>
             </div>
 
+            {/* Needs 與 Wants 表格 */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
               {['needs', 'wants'].map(type => {
                 const isNeeds = type === 'needs';
                 const list = isNeeds ? needs : wants;
                 return (
-                  <div key={type} className="bg-white/50 dark:bg-black/40 backdrop-blur-xl border border-white/80 dark:border-white/10 p-4 md:p-6 rounded-[1.25rem] shadow-sm">
-                    <h3 className={`text-lg font-bold mb-4 ${isNeeds ? 'text-indigo-900 dark:text-indigo-200 bg-indigo-100/70 dark:bg-indigo-900/60' : 'text-purple-900 dark:text-purple-200 bg-purple-100/70 dark:bg-purple-900/60'} inline-block px-4 py-1.5 rounded-lg`}>
+                  <div key={type} className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-xl border border-white/80 dark:border-slate-700/50 p-4 md:p-6 rounded-[1.25rem] shadow-sm">
+                    <h3 className={`text-lg font-bold mb-4 ${isNeeds ? 'text-indigo-900 dark:text-indigo-200 bg-indigo-100/70 dark:bg-indigo-950/70' : 'text-purple-900 dark:text-purple-200 bg-purple-100/70 dark:bg-purple-950/70'} inline-block px-4 py-1.5 rounded-lg border border-transparent dark:border-slate-700/40`}>
                       {t(`budget.${type}`)}
                     </h3>
                     <div className="overflow-x-auto hide-scrollbar">
                       <table className="w-full min-w-[560px] table-fixed text-sm text-left border-collapse">
                         <thead>
-                          <tr className="text-gray-600 dark:text-gray-400 border-b border-indigo-200/50">
+                          <tr className="text-gray-600 dark:text-slate-400 border-b border-indigo-200/50 dark:border-slate-700/60">
                             <th className="pb-3 w-[24%] font-bold">{t('budget.category')}</th>
                             <th className="pb-3 w-[26%] font-bold">{t('budget.item')}</th>
                             <th className="pb-3 w-[16%] font-bold">{t('budget.freq')}</th>
@@ -246,37 +251,37 @@ export default function App() {
                         </thead>
                         <tbody>
                           {list.map(item => (
-                            <tr key={item.id} className="border-b border-indigo-100/40 dark:border-indigo-900/30">
+                            <tr key={item.id} className="border-b border-indigo-100/40 dark:border-slate-700/40">
                               <td className="py-2.5 pr-2">
-                                <div onClick={(e) => toggleDropdown(item.id, 'cat', type, e)} className="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl cursor-pointer flex justify-between items-center hover:bg-white font-bold text-indigo-950 dark:text-indigo-100">
+                                <div onClick={(e) => toggleDropdown(item.id, 'cat', type, e)} className="w-full p-2.5 bg-white/80 dark:bg-slate-800/90 border border-white dark:border-slate-700/60 rounded-xl cursor-pointer flex justify-between items-center hover:bg-white dark:hover:bg-slate-700 font-bold text-indigo-950 dark:text-slate-100">
                                   <span className="truncate">{t(`categories.${item.categoryKey}`)}</span>
                                   <span className="text-xs">▼</span>
                                 </div>
                               </td>
                               <td className="py-2.5 pr-2">
-                                <input type="text" value={item.item} onChange={e => updateItem(type, item.id, 'item', e.target.value)} className="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl font-bold text-indigo-950 dark:text-indigo-100 outline-none" />
+                                <input type="text" value={item.item} onChange={e => updateItem(type, item.id, 'item', e.target.value)} className="w-full p-2.5 bg-white/80 dark:bg-slate-800/90 border border-white dark:border-slate-700/60 rounded-xl font-bold text-indigo-950 dark:text-slate-100 outline-none focus:border-indigo-500" />
                               </td>
                               <td className="py-2.5 pr-2">
-                                <div onClick={(e) => toggleDropdown(item.id, 'freq', type, e)} className="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl cursor-pointer flex justify-between items-center hover:bg-white font-bold text-indigo-950 dark:text-indigo-100">
+                                <div onClick={(e) => toggleDropdown(item.id, 'freq', type, e)} className="w-full p-2.5 bg-white/80 dark:bg-slate-800/90 border border-white dark:border-slate-700/60 rounded-xl cursor-pointer flex justify-between items-center hover:bg-white dark:hover:bg-slate-700 font-bold text-indigo-950 dark:text-slate-100">
                                   <span>{t(`freqs.${item.freqKey}`)}</span>
                                   <span className="text-xs">▼</span>
                                 </div>
                               </td>
                               <td className="py-2.5 pr-2">
-                                <input type="number" min="0" value={item.amount} onChange={e => updateItem(type, item.id, 'amount', Number(e.target.value))} className="w-full p-2.5 bg-white/80 dark:bg-black/60 border border-white dark:border-white/20 rounded-xl text-right font-bold text-indigo-950 dark:text-indigo-100 outline-none" />
+                                <input type="number" min="0" value={item.amount} onChange={e => updateItem(type, item.id, 'amount', Number(e.target.value))} className="w-full p-2.5 bg-white/80 dark:bg-slate-800/90 border border-white dark:border-slate-700/60 rounded-xl text-right font-bold text-indigo-950 dark:text-slate-100 outline-none focus:border-indigo-500" />
                               </td>
-                              <td className="py-2.5 text-right font-black text-indigo-900 dark:text-indigo-100 truncate">
+                              <td className="py-2.5 text-right font-black text-indigo-900 dark:text-slate-100 truncate">
                                 {format(item.amount * freqMap[item.freqKey])}
                               </td>
                               <td className="py-2.5 text-center">
-                                <button onClick={() => removeItem(type, item.id)} className="p-2 text-gray-400 hover:text-rose-600">✕</button>
+                                <button onClick={() => removeItem(type, item.id)} className="p-2 text-gray-400 hover:text-rose-500">✕</button>
                               </td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
                     </div>
-                    <button onClick={() => (isNeeds ? setNeeds : setWants)(prev => [...prev, { id: generateId(), categoryKey: 'food', item: '', freqKey: 'month', amount: 0 }])} className="w-full mt-4 py-3 bg-white/60 dark:bg-black/50 border border-white text-indigo-700 dark:text-indigo-300 rounded-xl font-bold">
+                    <button onClick={() => (isNeeds ? setNeeds : setWants)(prev => [...prev, { id: generateId(), categoryKey: 'food', item: '', freqKey: 'month', amount: 0 }])} className="w-full mt-4 py-3 bg-white/60 dark:bg-slate-800/70 border border-white dark:border-slate-700/60 text-indigo-700 dark:text-indigo-300 rounded-xl font-bold hover:bg-white dark:hover:bg-slate-700/80 transition-colors">
                       + {t(`budget.add${isNeeds ? 'Need' : 'Want'}`)}
                     </button>
                   </div>
@@ -288,27 +293,27 @@ export default function App() {
 
         {currentTab === 'fire' && (
           <div className="space-y-6">
-            <div className="bg-white/60 dark:bg-black/50 backdrop-blur-xl border border-white/80 dark:border-white/10 rounded-2xl p-4 md:p-5 shadow-sm">
+            <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border border-white/80 dark:border-slate-700/60 rounded-2xl p-4 md:p-5 shadow-sm">
               <div onClick={() => setShowFireGuide(!showFireGuide)} className="cursor-pointer flex justify-between items-center select-none font-bold text-indigo-950 dark:text-indigo-200">
-                <span className="flex items-center gap-2"><span className="bg-indigo-500/20 text-indigo-600 rounded-full w-6 h-6 flex items-center justify-center font-black">?</span>{t('fireGuide.title')}</span>
-                <span className="text-xs text-indigo-600">{showFireGuide ? t('fireGuide.collapse') : t('fireGuide.expand')}</span>
+                <span className="flex items-center gap-2"><span className="bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 rounded-full w-6 h-6 flex items-center justify-center font-black">?</span>{t('fireGuide.title')}</span>
+                <span className="text-xs text-indigo-600 dark:text-indigo-400">{showFireGuide ? t('fireGuide.collapse') : t('fireGuide.expand')}</span>
               </div>
               {showFireGuide && (
-                <div className="mt-4 pt-4 border-t border-indigo-100 space-y-4 text-sm">
+                <div className="mt-4 pt-4 border-t border-indigo-100 dark:border-slate-700/60 space-y-4 text-sm">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {['step1', 'step2', 'step3'].map(step => (
-                      <div key={step} className="bg-white/50 dark:bg-black/30 p-3.5 rounded-xl border border-indigo-50">
-                        <h5 className="font-bold text-indigo-900 dark:text-indigo-200 mb-1">{t(`fireGuide.${step}Title`)}</h5>
-                        <p className="text-xs opacity-80">{t(`fireGuide.${step}Desc`)}</p>
+                      <div key={step} className="bg-white/50 dark:bg-slate-800/80 p-3.5 rounded-xl border border-indigo-50 dark:border-slate-700/50">
+                        <h5 className="font-bold text-indigo-900 dark:text-indigo-300 mb-1">{t(`fireGuide.${step}Title`)}</h5>
+                        <p className="text-xs opacity-80 text-slate-300">{t(`fireGuide.${step}Desc`)}</p>
                       </div>
                     ))}
                   </div>
-                  <div className="bg-indigo-50/70 dark:bg-indigo-950/50 p-4 rounded-xl border border-indigo-200 flex flex-col md:flex-row justify-between items-center gap-3">
+                  <div className="bg-indigo-50/70 dark:bg-slate-800/80 p-4 rounded-xl border border-indigo-200 dark:border-slate-700/60 flex flex-col md:flex-row justify-between items-center gap-3">
                     <div>
-                      <div className="font-bold text-indigo-950 dark:text-indigo-100 text-sm">📌 {t('fireGuide.exampleTitle')}</div>
-                      <div className="text-xs opacity-90">{t('fireGuide.exampleDesc')}</div>
+                      <div className="font-bold text-indigo-950 dark:text-indigo-200 text-sm">📌 {t('fireGuide.exampleTitle')}</div>
+                      <div className="text-xs opacity-90 text-slate-300">{t('fireGuide.exampleDesc')}</div>
                     </div>
-                    <button onClick={() => setFire({ currentAge: 28, fireAge: 55, deathAge: 80, annualWithdraw: 840000, currentSavings: 600000, yieldRate: 5.0, investReturn: 7.0 })} className="whitespace-nowrap px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold text-xs">
+                    <button onClick={() => setFire({ currentAge: 28, fireAge: 55, deathAge: 80, annualWithdraw: 840000, currentSavings: 600000, yieldRate: 5.0, investReturn: 7.0 })} className="whitespace-nowrap px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold text-xs shadow-sm">
                       👉 {t('fireGuide.loadExampleBtn')}
                     </button>
                   </div>
@@ -317,30 +322,30 @@ export default function App() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-              <div className="bg-white/50 dark:bg-black/40 backdrop-blur-xl border border-white/80 dark:border-white/10 p-6 rounded-[1.5rem] space-y-6">
+              <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-xl border border-white/80 dark:border-slate-700/50 p-6 rounded-[1.5rem] space-y-6">
                 <div>
-                  <h3 className="text-lg font-bold border-b pb-3 mb-5 text-indigo-950 dark:text-indigo-200">{t('fire.goalTitle')}</h3>
+                  <h3 className="text-lg font-bold border-b border-indigo-100 dark:border-slate-700/60 pb-3 mb-5 text-indigo-950 dark:text-indigo-200">{t('fire.goalTitle')}</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     {[['currentAge', 'age'], ['fireAge', 'age'], ['deathAge', 'age'], ['annualWithdraw', 'currency']].map(([key, unit]) => (
                       <div key={key}>
-                        <label className="block text-sm font-bold mb-2 text-indigo-950 dark:text-indigo-200">{t(`fire.${key}`)}</label>
+                        <label className="block text-sm font-bold mb-2 text-indigo-950 dark:text-slate-200">{t(`fire.${key}`)}</label>
                         <div className="relative">
-                          <input type="number" min="0" value={fire[key]} onChange={e => setFire({ ...fire, [key]: Number(e.target.value) })} className="w-full p-3.5 pr-14 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100" />
-                          <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-500 font-bold text-sm pointer-events-none">{t(`units.${unit}`)}</span>
+                          <input type="number" min="0" value={fire[key]} onChange={e => setFire({ ...fire, [key]: Number(e.target.value) })} className="w-full p-3.5 pr-14 bg-white/80 dark:bg-slate-800/90 border border-white dark:border-slate-700/60 rounded-xl text-right font-black text-indigo-950 dark:text-white outline-none" />
+                          <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-500 dark:text-indigo-400 font-bold text-sm pointer-events-none">{t(`units.${unit}`)}</span>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold border-b pb-3 mb-5 text-indigo-950 dark:text-indigo-200">{t('fire.planTitle')}</h3>
+                  <h3 className="text-lg font-bold border-b border-indigo-100 dark:border-slate-700/60 pb-3 mb-5 text-indigo-950 dark:text-indigo-200">{t('fire.planTitle')}</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     {[['currentSavings', 'currency'], ['yieldRate', '%'], ['investReturn', '%']].map(([key, unit]) => (
                       <div key={key}>
-                        <label className="block text-sm font-bold mb-2 text-indigo-950 dark:text-indigo-200">{t(`fire.${key}`)}</label>
+                        <label className="block text-sm font-bold mb-2 text-indigo-950 dark:text-slate-200">{t(`fire.${key}`)}</label>
                         <div className="relative">
-                          <input type="number" min="0" step="0.1" value={fire[key]} onChange={e => setFire({ ...fire, [key]: Number(e.target.value) })} className="w-full p-3.5 pr-14 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100" />
-                          <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-500 font-bold text-sm pointer-events-none">{unit === '%' ? '%' : t(`units.${unit}`)}</span>
+                          <input type="number" min="0" step="0.1" value={fire[key]} onChange={e => setFire({ ...fire, [key]: Number(e.target.value) })} className="w-full p-3.5 pr-14 bg-white/80 dark:bg-slate-800/90 border border-white dark:border-slate-700/60 rounded-xl text-right font-black text-indigo-950 dark:text-white outline-none" />
+                          <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-indigo-500 dark:text-indigo-400 font-bold text-sm pointer-events-none">{unit === '%' ? '%' : t(`units.${unit}`)}</span>
                         </div>
                       </div>
                     ))}
@@ -349,19 +354,19 @@ export default function App() {
               </div>
 
               <div className="space-y-6 flex flex-col justify-center">
-                <div className="bg-white/70 dark:bg-black/50 backdrop-blur-2xl border p-6 rounded-[1.5rem]">
+                <div className="bg-white/70 dark:bg-slate-800/60 backdrop-blur-2xl border border-white/80 dark:border-slate-700/50 p-6 rounded-[1.5rem] shadow-sm">
                   <h4 className="text-sm font-black text-blue-700 dark:text-blue-400 mb-2 uppercase">{t('fire.targetHeader')}</h4>
-                  <div className="text-3xl md:text-5xl font-black text-indigo-950 dark:text-indigo-100 mb-4">${format(fireCalc.target)}</div>
-                  <div className="font-mono bg-white/80 dark:bg-black/40 p-4 rounded-xl text-xs font-bold text-indigo-950 dark:text-indigo-200">
+                  <div className="text-3xl md:text-5xl font-black text-indigo-950 dark:text-white mb-4">${format(fireCalc.target)}</div>
+                  <div className="font-mono bg-white/80 dark:bg-slate-900/60 p-4 rounded-xl text-xs font-bold text-indigo-950 dark:text-slate-200 border border-transparent dark:border-slate-700/40">
                     <p className="font-black mb-1">{t('fire.formulaPV')}</p>
                     <p>PV = (1 - (1+R)^-N) / R = {fireCalc.pvFactor.toFixed(2)}</p>
                     <p>{t('fire.targetDesc')}</p>
                   </div>
                 </div>
-                <div className="bg-white/70 dark:bg-black/50 backdrop-blur-2xl border p-6 rounded-[1.5rem]">
+                <div className="bg-white/70 dark:bg-slate-800/60 backdrop-blur-2xl border border-white/80 dark:border-slate-700/50 p-6 rounded-[1.5rem] shadow-sm">
                   <h4 className="text-sm font-black text-purple-700 dark:text-purple-400 mb-2 uppercase">{t('fire.planHeader')}</h4>
-                  <div className="text-3xl md:text-5xl font-black text-purple-950 dark:text-purple-100 mb-4">${format(fireCalc.monthlyNeeded)}</div>
-                  <div className="font-mono bg-white/80 dark:bg-black/40 p-4 rounded-xl text-xs font-bold text-purple-950 dark:text-purple-200">
+                  <div className="text-3xl md:text-5xl font-black text-purple-950 dark:text-purple-300 mb-4">${format(fireCalc.monthlyNeeded)}</div>
+                  <div className="font-mono bg-white/80 dark:bg-slate-900/60 p-4 rounded-xl text-xs font-bold text-purple-950 dark:text-purple-200 border border-transparent dark:border-slate-700/40">
                     <p className="font-black mb-1">{t('fire.formulaFV')}</p>
                     <p>FV = ((1+Mo.Rate)^n - 1) / Mo.Rate = {fireCalc.fvFactor.toFixed(2)}</p>
                     <p>{t('fire.planDesc')}</p>
@@ -374,23 +379,23 @@ export default function App() {
 
         {currentTab === 'regular' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
-            <div className="bg-white/50 dark:bg-black/40 backdrop-blur-xl border border-white/80 dark:border-white/10 p-6 md:p-10 rounded-[1.5rem] flex flex-col justify-center space-y-6">
-              <h3 className="text-xl font-bold border-b pb-4 mb-2 text-indigo-950 dark:text-indigo-200">{t('regular.paramsTitle')}</h3>
+            <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-xl border border-white/80 dark:border-slate-700/50 p-6 md:p-10 rounded-[1.5rem] flex flex-col justify-center space-y-6">
+              <h3 className="text-xl font-bold border-b border-indigo-100 dark:border-slate-700/60 pb-4 mb-2 text-indigo-950 dark:text-indigo-200">{t('regular.paramsTitle')}</h3>
               {[['monthly', 'monthlyInvest', 'currency'], ['rate', 'annualRate', '%'], ['years', 'years', 'year']].map(([key, labelKey, unit]) => (
                 <div key={key}>
-                  <label className="block text-sm font-bold text-indigo-950 dark:text-indigo-300 mb-2">{t(`regular.${labelKey}`)}</label>
+                  <label className="block text-sm font-bold text-indigo-950 dark:text-slate-200 mb-2">{t(`regular.${labelKey}`)}</label>
                   <div className="relative">
-                    <input type="number" min="0" step={key === 'rate' ? '0.1' : '1'} value={regular[key]} onChange={e => setRegular({ ...regular, [key]: Number(e.target.value) })} className="w-full p-4 pr-14 bg-white/80 dark:bg-black/60 border rounded-xl text-right font-black text-indigo-950 dark:text-indigo-100 text-lg" />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-500 font-bold text-sm pointer-events-none">{unit === '%' ? '%' : t(`units.${unit}`)}</span>
+                    <input type="number" min="0" step={key === 'rate' ? '0.1' : '1'} value={regular[key]} onChange={e => setRegular({ ...regular, [key]: Number(e.target.value) })} className="w-full p-4 pr-14 bg-white/80 dark:bg-slate-800/90 border border-white dark:border-slate-700/60 rounded-xl text-right font-black text-indigo-950 dark:text-white text-lg outline-none" />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-500 dark:text-indigo-400 font-bold text-sm pointer-events-none">{unit === '%' ? '%' : t(`units.${unit}`)}</span>
                   </div>
                 </div>
               ))}
             </div>
             <div className="flex flex-col justify-center">
-              <div className="bg-gradient-to-br from-indigo-500 to-purple-600 dark:from-indigo-900 dark:to-purple-900 p-6 md:p-10 rounded-[1.5rem] shadow-xl text-center h-full flex flex-col justify-center text-white">
+              <div className="bg-gradient-to-br from-indigo-500 to-purple-600 dark:from-indigo-600 dark:to-purple-700 p-6 md:p-10 rounded-[1.5rem] shadow-xl text-center h-full flex flex-col justify-center text-white">
                 <h4 className="text-sm md:text-lg font-bold text-indigo-100 mb-2 uppercase">{t('regular.resultTitle')}</h4>
                 <div className="text-4xl md:text-6xl font-black mb-6 tracking-tight">${format(regularCalc.totalValue)}</div>
-                <div className="text-xs md:text-sm text-left font-mono bg-black/30 p-4 rounded-xl border border-white/20 text-indigo-100">
+                <div className="text-xs md:text-sm text-left font-mono bg-black/20 p-4 rounded-xl border border-white/20 text-indigo-100">
                   <strong className="text-white mb-2 block">{t('regular.formulaTitle')}</strong>
                   <p>{t('regular.moRateText')} = {(regular.rate/12).toFixed(3)}% | {t('regular.totalPeriods')} = {regular.years * 12} {t('regular.monthsText')}</p>
                   <p className="mt-2 font-bold">{t('regular.formulaDesc')} ({regularCalc.fvFactor.toFixed(2)})</p>
@@ -405,7 +410,7 @@ export default function App() {
         <div
           onClick={e => e.stopPropagation()}
           style={{ top: `${activeDropdown.coords.top}px`, left: `${activeDropdown.coords.left}px`, minWidth: `${activeDropdown.coords.minWidth}px` }}
-          className="global-dropdown-portal bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-indigo-200 dark:border-indigo-800 rounded-xl overflow-hidden py-1"
+          className="global-dropdown-portal bg-white/95 dark:bg-slate-800/95 backdrop-blur-2xl border border-indigo-200 dark:border-slate-700 rounded-xl overflow-hidden py-1 shadow-2xl"
         >
           {activeDropdown.type === 'cat' ? (
             categories.map(c => (
@@ -415,7 +420,7 @@ export default function App() {
                   updateItem(activeDropdown.targetType, activeDropdown.id, 'categoryKey', c);
                   setActiveDropdown(null);
                 }}
-                className="px-4 py-3 hover:bg-indigo-100 dark:hover:bg-indigo-900 cursor-pointer text-indigo-950 dark:text-indigo-100 font-bold transition-colors"
+                className="px-4 py-3 hover:bg-indigo-50 dark:hover:bg-slate-700 cursor-pointer text-indigo-950 dark:text-slate-100 font-bold transition-colors"
               >
                 {t(`categories.${c}`)}
               </div>
@@ -428,7 +433,7 @@ export default function App() {
                   updateItem(activeDropdown.targetType, activeDropdown.id, 'freqKey', key);
                   setActiveDropdown(null);
                 }}
-                className="px-4 py-3 hover:bg-indigo-100 dark:hover:bg-indigo-900 cursor-pointer text-indigo-950 dark:text-indigo-100 font-bold transition-colors"
+                className="px-4 py-3 hover:bg-indigo-50 dark:hover:bg-slate-700 cursor-pointer text-indigo-950 dark:text-slate-100 font-bold transition-colors"
               >
                 {t(`freqs.${key}`)}
               </div>
