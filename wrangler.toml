@@ -1,0 +1,5 @@
+name = "finance-calculator"
+compatibility_date = "2026-08-13"
+
+[site]
+bucket = "./dist"
