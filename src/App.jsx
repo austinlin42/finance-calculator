@@ -29,7 +29,11 @@ const messages = {
     },
     regular: {
       paramsTitle: '參數設定', monthlyInvest: '每月定期定額投入', annualRate: '預期年化報酬率 (r%)', years: '預計持續年數 (n)', resultTitle: '預期累積金額',
-      formulaTitle: '公式推導 (年金終值 FV)：', moRateText: '月利率', totalPeriods: '總期數', monthsText: '個月', formulaDesc: '累積金額 = 每月投入 × 終值係數'
+      formulaTitle: '公式推導 (年金終值 FV)：', moRateText: '月利率', totalPeriods: '總期數', monthsText: '個月', formulaDesc: '累積金額 = 每月投入 × 終值係數',
+      principal: '💵 累積投入本金', interest: '🚀 複利獲利收益',
+      chartTitle: '📈 複利成長曲線分析', chartSub: '綠紫色區塊為「複利帶來的利滾利收益」，時間越長曲線斜率越陡峭！',
+      legendPrincipal: '累積本金', legendInterest: '複利收益',
+      summaryPrefix: '💡 複利小結：在第', summaryMid: '年時，複利獲利佔了總資產的', yearUnit: '年', yearLabel: '第'
     }
   },
   en: {
@@ -59,7 +63,11 @@ const messages = {
     },
     regular: {
       paramsTitle: 'Parameters', monthlyInvest: 'Monthly Investment', annualRate: 'Expected Annual Return (r%)', years: 'Investment Years (n)', resultTitle: 'Expected Accumulated Value',
-      formulaTitle: 'Formula (Future Value FV):', moRateText: 'Monthly Rate', totalPeriods: 'Total Periods', monthsText: 'months', formulaDesc: 'Total Value = Monthly Investment × FV Factor'
+      formulaTitle: 'Formula (Future Value FV):', moRateText: 'Monthly Rate', totalPeriods: 'Total Periods', monthsText: 'months', formulaDesc: 'Total Value = Monthly Investment × FV Factor',
+      principal: '💵 Total Principal', interest: '🚀 Compound Interest',
+      chartTitle: '📈 Compound Growth Analysis', chartSub: 'The gradient area represents profit from compound interest over time.',
+      legendPrincipal: 'Principal', legendInterest: 'Compound Interest',
+      summaryPrefix: '💡 Summary: By Year', summaryMid: ', compound gains account for', yearUnit: 'Yrs', yearLabel: 'Year '
     }
   }
 };
@@ -68,6 +76,13 @@ const categories = ['food', 'clothing', 'housing', 'transport', 'education', 'fu
 const freqMap = { day: 365, week: 52, month: 12, bimonth: 6, quarter: 4, year: 1 };
 const generateId = () => Math.random().toString(36).substring(2, 9);
 const format = (num) => isNaN(num) || num < 0 ? '0' : Math.round(num).toLocaleString('en-US');
+const formatCompact = (num) => {
+  if (isNaN(num) || num <= 0) return '$0';
+  if (num >= 1e8) return `$${(num / 1e8).toFixed(1)}億`;
+  if (num >= 1e6) return `$${(num / 1e6).toFixed(1)}M`;
+  if (num >= 1e3) return `$${(num / 1e3).toFixed(0)}K`;
+  return `$${Math.round(num)}`;
+};
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState('budget');
@@ -148,7 +163,8 @@ export default function App() {
   }, [fire]);
 
   const [regular, setRegular] = useState({ monthly: 10000, rate: 7.0, years: 30 });
-  
+  const [hoverIndex, setHoverIndex] = useState(null);
+
   const regularCalc = useMemo(() => {
     const months = Math.max(0, regular.years) * 12;
     const rMonth = Math.max(0, regular.rate / 100) / 12;
@@ -177,7 +193,7 @@ export default function App() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 md:space-y-8 p-4 md:p-6 min-h-screen">
-      {/* 頂部選單與語系/主題按鈕 */}
+      {/* 頂部導覽 */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6 relative z-20">
         <div className="flex overflow-x-auto hide-scrollbar w-full md:w-auto pb-2 md:pb-0 order-2 md:order-1">
           <div className="mx-auto md:mx-0 w-max bg-white/60 dark:bg-slate-800/60 backdrop-blur-2xl border border-white/80 dark:border-slate-700/60 p-1.5 rounded-full flex flex-nowrap gap-1 shadow-sm">
@@ -205,7 +221,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* 主面板容器 */}
+      {/* 主面板 */}
       <div className="bg-white/40 dark:bg-slate-900/50 backdrop-blur-3xl border border-white/70 dark:border-slate-700/50 shadow-2xl rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-6 md:p-10 relative">
         {currentTab === 'budget' && (
           <div className="space-y-6 md:space-y-8">
@@ -393,7 +409,7 @@ export default function App() {
           </div>
         )}
 
-        {/* 定期定額計算機 (含複利成長曲線圖表) */}
+        {/* 定期定額計算機 (含英文翻譯、Y軸數據與Hover互動) */}
         {currentTab === 'regular' && (
           <div className="space-y-8 max-w-6xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
@@ -440,11 +456,11 @@ export default function App() {
 
                   <div className="grid grid-cols-2 gap-3 mb-4">
                     <div className="bg-black/20 backdrop-blur-md p-3 rounded-xl border border-white/10 text-left">
-                      <span className="text-xs text-indigo-200 block mb-0.5">💵 累積投入本金</span>
+                      <span className="text-xs text-indigo-200 block mb-0.5">{t('regular.principal')}</span>
                       <span className="text-lg font-bold">${format(regularCalc.totalPrincipal)}</span>
                     </div>
                     <div className="bg-emerald-500/20 backdrop-blur-md p-3 rounded-xl border border-emerald-400/30 text-left">
-                      <span className="text-xs text-emerald-200 block mb-0.5">🚀 複利獲利收益</span>
+                      <span className="text-xs text-emerald-200 block mb-0.5">{t('regular.interest')}</span>
                       <span className="text-lg font-bold text-emerald-300">
                         +${format(regularCalc.totalInterest)}
                       </span>
@@ -459,97 +475,167 @@ export default function App() {
               </div>
             </div>
 
-            {/* 複利成長曲線視覺化圖表 */}
+            {/* 複利曲線圖表 (含 Y 軸數值 & Hover 互動) */}
             <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border border-white/80 dark:border-slate-700/60 p-6 md:p-8 rounded-[1.5rem] shadow-lg">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
                   <h3 className="text-lg font-bold text-indigo-950 dark:text-slate-100 flex items-center gap-2">
-                    📈 複利成長曲線分析 (Compound Growth Trend)
+                    {t('regular.chartTitle')}
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    綠紫色區塊為「複利帶來的利滾利收益」，時間越長曲線斜率越陡峭！
+                    {t('regular.chartSub')}
                   </p>
                 </div>
                 <div className="flex items-center gap-4 text-xs font-bold">
                   <div className="flex items-center gap-1.5">
                     <span className="w-3 h-3 rounded-sm bg-indigo-500/80 inline-block"></span>
-                    <span className="text-slate-600 dark:text-slate-300">累積本金</span>
+                    <span className="text-slate-600 dark:text-slate-300">{t('regular.legendPrincipal')}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className="w-3 h-3 rounded-sm bg-gradient-to-r from-purple-500 to-emerald-400 inline-block"></span>
-                    <span className="text-slate-600 dark:text-slate-300">複利收益</span>
+                    <span className="text-slate-600 dark:text-slate-300">{t('regular.legendInterest')}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="relative w-full h-64 md:h-80">
-                <svg className="w-full h-full overflow-visible" viewBox="0 0 500 200" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="principalGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#6366f1" stopOpacity="0.4" />
-                      <stop offset="100%" stopColor="#6366f1" stopOpacity="0.05" />
-                    </linearGradient>
-                    <linearGradient id="interestGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#10b981" stopOpacity="0.6" />
-                      <stop offset="50%" stopColor="#a855f7" stopOpacity="0.4" />
-                      <stop offset="100%" stopColor="#6366f1" stopOpacity="0.1" />
-                    </linearGradient>
-                  </defs>
+              {/* 圖表主要區域（含左側 Y 軸金額刻度） */}
+              <div className="flex gap-3">
+                {/* Y 軸金額數字刻度 (5層) */}
+                <div className="flex flex-col justify-between items-end text-[10px] sm:text-xs font-mono text-slate-400 select-none py-1 w-14 shrink-0">
+                  <span>{formatCompact(regularCalc.totalValue)}</span>
+                  <span>{formatCompact(regularCalc.totalValue * 0.75)}</span>
+                  <span>{formatCompact(regularCalc.totalValue * 0.5)}</span>
+                  <span>{formatCompact(regularCalc.totalValue * 0.25)}</span>
+                  <span>$0</span>
+                </div>
 
-                  {[0, 0.25, 0.5, 0.75, 1].map((ratio, idx) => (
-                    <line 
-                      key={idx} 
-                      x1="0" 
-                      y1={200 * ratio} 
-                      x2="500" 
-                      y2={200 * ratio} 
-                      stroke="currentColor" 
-                      className="text-slate-200 dark:text-slate-700/50" 
-                      strokeDasharray="4 4" 
-                    />
-                  ))}
+                {/* SVG 畫布區域 */}
+                <div className="relative w-full h-64 md:h-80">
+                  <svg 
+                    className="w-full h-full overflow-visible cursor-crosshair" 
+                    viewBox="0 0 500 200" 
+                    preserveAspectRatio="none"
+                    onMouseLeave={() => setHoverIndex(null)}
+                    onMouseMove={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const xPercent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                      const idx = Math.round(xPercent * (regularChartData.length - 1));
+                      setHoverIndex(idx);
+                    }}
+                  >
+                    <defs>
+                      <linearGradient id="principalGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#6366f1" stopOpacity="0.4" />
+                        <stop offset="100%" stopColor="#6366f1" stopOpacity="0.05" />
+                      </linearGradient>
+                      <linearGradient id="interestGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#10b981" stopOpacity="0.6" />
+                        <stop offset="50%" stopColor="#a855f7" stopOpacity="0.4" />
+                        <stop offset="100%" stopColor="#6366f1" stopOpacity="0.1" />
+                      </linearGradient>
+                    </defs>
 
-                  {(() => {
-                    const maxVal = Math.max(1, regularCalc.totalValue);
-                    const count = regularChartData.length;
-                    
-                    const totalPoints = regularChartData.map((d, i) => {
-                      const x = (i / (count - 1)) * 500;
-                      const y = 200 - (d.total / maxVal) * 180;
-                      return `${x},${y}`;
-                    }).join(' ');
+                    {/* 背景橫向網格線 */}
+                    {[0, 0.25, 0.5, 0.75, 1].map((ratio, idx) => (
+                      <line 
+                        key={idx} 
+                        x1="0" 
+                        y1={200 * ratio} 
+                        x2="500" 
+                        y2={200 * ratio} 
+                        stroke="currentColor" 
+                        className="text-slate-200 dark:text-slate-700/50" 
+                        strokeDasharray="4 4" 
+                      />
+                    ))}
 
-                    const principalPoints = regularChartData.map((d, i) => {
-                      const x = (i / (count - 1)) * 500;
-                      const y = 200 - (d.principal / maxVal) * 180;
-                      return `${x},${y}`;
-                    }).join(' ');
+                    {(() => {
+                      const maxVal = Math.max(1, regularCalc.totalValue);
+                      const count = regularChartData.length;
+                      
+                      const totalPoints = regularChartData.map((d, i) => {
+                        const x = (i / (count - 1)) * 500;
+                        const y = 200 - (d.total / maxVal) * 180;
+                        return `${x},${y}`;
+                      }).join(' ');
 
-                    const totalAreaPath = `M 0,200 L ${totalPoints} L 500,200 Z`;
-                    const principalAreaPath = `M 0,200 L ${principalPoints} L 500,200 Z`;
+                      const principalPoints = regularChartData.map((d, i) => {
+                        const x = (i / (count - 1)) * 500;
+                        const y = 200 - (d.principal / maxVal) * 180;
+                        return `${x},${y}`;
+                      }).join(' ');
 
-                    return (
-                      <>
-                        <path d={totalAreaPath} fill="url(#interestGrad)" />
-                        <path d={`M ${totalPoints}`} fill="none" stroke="#10b981" strokeWidth="3" />
+                      const totalAreaPath = `M 0,200 L ${totalPoints} L 500,200 Z`;
+                      const principalAreaPath = `M 0,200 L ${principalPoints} L 500,200 Z`;
 
-                        <path d={principalAreaPath} fill="url(#principalGrad)" />
-                        <path d={`M ${principalPoints}`} fill="none" stroke="#6366f1" strokeWidth="2" strokeDasharray="3 3" />
-                      </>
-                    );
-                  })()}
-                </svg>
+                      return (
+                        <>
+                          <path d={totalAreaPath} fill="url(#interestGrad)" />
+                          <path d={`M ${totalPoints}`} fill="none" stroke="#10b981" strokeWidth="3" />
 
-                <div className="flex justify-between items-center text-xs text-slate-400 mt-2 font-mono">
-                  <span>第 0 年</span>
-                  <span>第 {Math.round(regular.years / 2)} 年</span>
-                  <span>第 {regular.years} 年</span>
+                          <path d={principalAreaPath} fill="url(#principalGrad)" />
+                          <path d={`M ${principalPoints}`} fill="none" stroke="#6366f1" strokeWidth="2" strokeDasharray="3 3" />
+
+                          {/* Hover 指標輔助線與圓點 */}
+                          {hoverIndex !== null && regularChartData[hoverIndex] && (() => {
+                            const d = regularChartData[hoverIndex];
+                            const x = (hoverIndex / (count - 1)) * 500;
+                            const yTotal = 200 - (d.total / maxVal) * 180;
+                            const yPrincipal = 200 - (d.principal / maxVal) * 180;
+
+                            return (
+                              <g className="pointer-events-none">
+                                <line x1={x} y1="0" x2={x} y2="200" stroke="#a855f7" strokeWidth="1.5" strokeDasharray="2 2" />
+                                <circle cx={x} cy={yTotal} r="5" fill="#10b981" stroke="#ffffff" strokeWidth="2" />
+                                <circle cx={x} cy={yPrincipal} r="4" fill="#6366f1" stroke="#ffffff" strokeWidth="2" />
+                              </g>
+                            );
+                          })()}
+                        </>
+                      );
+                    })()}
+                  </svg>
+
+                  {/* X 軸標籤 (年份動態切換) */}
+                  <div className="flex justify-between items-center text-xs text-slate-400 mt-2 font-mono">
+                    <span>{t('regular.yearLabel')}0 {t('regular.yearUnit')}</span>
+                    <span>{t('regular.yearLabel')}{Math.round(regular.years / 2)} {t('regular.yearUnit')}</span>
+                    <span>{t('regular.yearLabel')}{regular.years} {t('regular.yearUnit')}</span>
+                  </div>
+
+                  {/* Hover 面板 (Tooltip) */}
+                  {hoverIndex !== null && regularChartData[hoverIndex] && (
+                    <div 
+                      className="absolute top-2 pointer-events-none bg-slate-900/90 text-white backdrop-blur-md p-3 rounded-xl border border-slate-700 shadow-2xl text-xs space-y-1.5 transition-all duration-75 z-30"
+                      style={{
+                        left: `${Math.min(80, Math.max(20, (hoverIndex / (regularChartData.length - 1)) * 100))}%`,
+                        transform: 'translateX(-50%)'
+                      }}
+                    >
+                      <div className="font-bold text-indigo-300 border-b border-slate-700 pb-1">
+                        🗓️ {t('regular.yearLabel')}{regularChartData[hoverIndex].year} {t('regular.yearUnit')}
+                      </div>
+                      <div className="flex justify-between gap-4">
+                        <span className="text-slate-400">總資產 (Total):</span>
+                        <span className="font-bold text-emerald-400">${format(regularChartData[hoverIndex].total)}</span>
+                      </div>
+                      <div className="flex justify-between gap-4">
+                        <span className="text-slate-400">本金 (Principal):</span>
+                        <span className="font-bold text-indigo-300">${format(regularChartData[hoverIndex].principal)}</span>
+                      </div>
+                      <div className="flex justify-between gap-4">
+                        <span className="text-slate-400">獲利 (Gain):</span>
+                        <span className="font-bold text-purple-300">+${format(regularChartData[hoverIndex].interest)}</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
+              {/* 複利小結 */}
               <div className="mt-6 p-4 rounded-xl bg-indigo-50 dark:bg-slate-900/60 border border-indigo-100 dark:border-slate-700/50 flex items-center justify-between text-xs md:text-sm">
                 <span className="text-indigo-900 dark:text-indigo-200 font-medium">
-                  💡 <strong>複利小結：</strong> 在第 {regular.years} 年時，複利獲利佔了總資產的{' '}
+                  {t('regular.summaryPrefix')} {regular.years} {t('regular.summaryMid')}{' '}
                   <strong className="text-emerald-500 font-bold text-base">
                     {regularCalc.totalValue > 0 ? ((regularCalc.totalInterest / regularCalc.totalValue) * 100).toFixed(1) : 0}%
                   </strong>
