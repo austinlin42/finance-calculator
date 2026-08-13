@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 
-// 多國語系字典
 const messages = {
   zh: {
     tabs: { budget: '1. 預算規劃工具', fire: '2. 財富自由計算機', regular: '3. 定期定額計算機' },
@@ -84,8 +83,7 @@ export default function App() {
     else document.documentElement.classList.remove('dark');
   }, [isDark]);
 
-  // --- React Portal 客製下拉選單組件 ---
-  const [activeDropdown, setActiveDropdown] = useState(null); // { id, type, targetType, coords }
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
   useEffect(() => {
     const handleGlobalClick = () => setActiveDropdown(null);
@@ -106,7 +104,6 @@ export default function App() {
     });
   };
 
-  // 1. Budget State
   const [needs, setNeeds] = useState([
     { id: generateId(), categoryKey: 'food', item: '每日三餐', freqKey: 'day', amount: 600 },
     { id: generateId(), categoryKey: 'housing', item: '房租、管理費', freqKey: 'month', amount: 20000 }
@@ -128,7 +125,6 @@ export default function App() {
     setFn(prev => prev.filter(item => item.id !== id));
   };
 
-  // 2. FIRE State
   const [showFireGuide, setShowFireGuide] = useState(false);
   const [fire, setFire] = useState({ currentAge: 28, fireAge: 55, deathAge: 80, annualWithdraw: 840000, currentSavings: 600000, yieldRate: 5.0, investReturn: 7.0 });
 
@@ -151,7 +147,6 @@ export default function App() {
     return { pvFactor, target, fvFactor, monthlyNeeded };
   }, [fire]);
 
-  // 3. Regular State
   const [regular, setRegular] = useState({ monthly: 10000, rate: 7.0, years: 30 });
   const regularCalc = useMemo(() => {
     const months = Math.max(0, regular.years) * 12;
@@ -163,7 +158,6 @@ export default function App() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 md:space-y-8 mt-2 md:mt-4">
-      {/* 頂部 Header */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6 relative z-20">
         <div className="flex overflow-x-auto hide-scrollbar w-full md:w-auto pb-2 md:pb-0 order-2 md:order-1">
           <div className="mx-auto md:mx-0 w-max bg-white/60 dark:bg-black/40 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-1.5 rounded-full flex flex-nowrap gap-1 shadow-sm">
@@ -191,11 +185,9 @@ export default function App() {
         </div>
       </div>
 
-      {/* 主內容卡片 */}
       <div className="bg-white/40 dark:bg-black/40 backdrop-blur-3xl border border-white/70 dark:border-white/10 shadow-xl rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-6 md:p-10 relative">
         {currentTab === 'budget' && (
           <div className="space-y-6 md:space-y-8">
-            {/* 參考指南 */}
             <div className="bg-white/60 dark:bg-black/50 backdrop-blur-xl border border-white/80 dark:border-white/10 p-4 md:p-5 rounded-2xl flex flex-col md:flex-row gap-4 items-start md:items-center text-sm shadow-sm">
               <div className="font-bold text-indigo-900 dark:text-indigo-200 text-base shrink-0 flex items-center gap-2">
                 <span className="bg-yellow-400/30 text-yellow-700 dark:text-yellow-400 rounded-full w-6 h-6 flex items-center justify-center font-black">i</span>
@@ -212,7 +204,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* 總結 */}
             <div className="bg-white/60 dark:bg-black/50 backdrop-blur-3xl border border-white/80 dark:border-white/10 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] shadow-sm">
               <h3 className="text-xl font-bold mb-6 text-center text-indigo-950 dark:text-indigo-100 bg-white/70 dark:bg-black/60 inline-block px-6 py-2 rounded-full border border-white/80 shadow-sm mx-auto flex w-max">{t('budget.summaryTitle')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 text-center">
@@ -222,7 +213,7 @@ export default function App() {
                 </div>
                 <div className="bg-white/70 dark:bg-black/40 border border-white/90 dark:border-white/10 p-5 md:p-6 rounded-2xl shadow-sm">
                   <div className="text-purple-700 dark:text-purple-300 font-bold text-sm mb-2">{t('budget.wants')}</div>
-                  <div class="text-3xl font-black text-purple-900 dark:text-purple-100">${format(totalWants)}</div>
+                  <div className="text-3xl font-black text-purple-900 dark:text-purple-100">${format(totalWants)}</div>
                 </div>
                 <div className="bg-gradient-to-br from-indigo-500 to-purple-600 dark:from-indigo-700 dark:to-purple-800 p-5 md:p-6 rounded-2xl shadow-md text-white md:scale-105">
                   <div className="text-indigo-100 font-medium text-sm mb-1">{t('budget.totalBudget')}</div>
@@ -232,7 +223,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* 表格區 */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
               {['needs', 'wants'].map(type => {
                 const isNeeds = type === 'needs';
@@ -296,7 +286,6 @@ export default function App() {
           </div>
         )}
 
-        {/* FIRE 計算機 */}
         {currentTab === 'fire' && (
           <div className="space-y-6">
             <div className="bg-white/60 dark:bg-black/50 backdrop-blur-xl border border-white/80 dark:border-white/10 rounded-2xl p-4 md:p-5 shadow-sm">
@@ -361,7 +350,7 @@ export default function App() {
 
               <div className="space-y-6 flex flex-col justify-center">
                 <div className="bg-white/70 dark:bg-black/50 backdrop-blur-2xl border p-6 rounded-[1.5rem]">
-                  <h4 class="text-sm font-black text-blue-700 dark:text-blue-400 mb-2 uppercase">{t('fire.targetHeader')}</h4>
+                  <h4 className="text-sm font-black text-blue-700 dark:text-blue-400 mb-2 uppercase">{t('fire.targetHeader')}</h4>
                   <div className="text-3xl md:text-5xl font-black text-indigo-950 dark:text-indigo-100 mb-4">${format(fireCalc.target)}</div>
                   <div className="font-mono bg-white/80 dark:bg-black/40 p-4 rounded-xl text-xs font-bold text-indigo-950 dark:text-indigo-200">
                     <p className="font-black mb-1">{t('fire.formulaPV')}</p>
@@ -383,7 +372,6 @@ export default function App() {
           </div>
         )}
 
-        {/* 定期定額計算機 */}
         {currentTab === 'regular' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
             <div className="bg-white/50 dark:bg-black/40 backdrop-blur-xl border border-white/80 dark:border-white/10 p-6 md:p-10 rounded-[1.5rem] flex flex-col justify-center space-y-6">
@@ -413,7 +401,6 @@ export default function App() {
         )}
       </div>
 
-      {/* React Portal 全域絕對選單 */}
       {activeDropdown && createPortal(
         <div
           onClick={e => e.stopPropagation()}
