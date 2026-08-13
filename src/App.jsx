@@ -71,7 +71,7 @@ const format = (num) => isNaN(num) || num < 0 ? '0' : Math.round(num).toLocaleSt
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState('budget');
-  const [isDark, setIsDark] = useState(true); // 預設暗色
+  const [isDark, setIsDark] = useState(true);
   const [lang, setLang] = useState('zh');
 
   const t = (path) => {
@@ -148,12 +148,31 @@ export default function App() {
   }, [fire]);
 
   const [regular, setRegular] = useState({ monthly: 10000, rate: 7.0, years: 30 });
+  
   const regularCalc = useMemo(() => {
     const months = Math.max(0, regular.years) * 12;
     const rMonth = Math.max(0, regular.rate / 100) / 12;
     const fvFactor = rMonth === 0 ? months : (Math.pow(1 + rMonth, months) - 1) / rMonth;
     const totalValue = Math.max(0, regular.monthly) * fvFactor;
-    return { fvFactor, totalValue };
+    const totalPrincipal = Math.max(0, regular.monthly) * months;
+    const totalInterest = Math.max(0, totalValue - totalPrincipal);
+    return { fvFactor, totalValue, totalPrincipal, totalInterest };
+  }, [regular]);
+
+  const regularChartData = useMemo(() => {
+    const data = [];
+    const rMonth = Math.max(0, regular.rate / 100) / 12;
+    const years = Math.min(50, Math.max(1, regular.years));
+    
+    for (let y = 0; y <= years; y++) {
+      const months = y * 12;
+      const principal = Math.max(0, regular.monthly) * months;
+      const fvFactor = rMonth === 0 ? months : (Math.pow(1 + rMonth, months) - 1) / rMonth;
+      const total = Math.max(0, regular.monthly) * fvFactor;
+      const interest = Math.max(0, total - principal);
+      data.push({ year: y, principal, interest, total });
+    }
+    return data;
   }, [regular]);
 
   return (
@@ -190,7 +209,6 @@ export default function App() {
       <div className="bg-white/40 dark:bg-slate-900/50 backdrop-blur-3xl border border-white/70 dark:border-slate-700/50 shadow-2xl rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-6 md:p-10 relative">
         {currentTab === 'budget' && (
           <div className="space-y-6 md:space-y-8">
-            {/* 參考指南 Banner */}
             <div className="bg-white/60 dark:bg-slate-800/70 backdrop-blur-xl border border-white/80 dark:border-slate-700/60 p-4 md:p-5 rounded-2xl flex flex-col md:flex-row gap-4 items-start md:items-center text-sm shadow-sm">
               <div className="font-bold text-indigo-900 dark:text-indigo-300 text-base shrink-0 flex items-center gap-2">
                 <span className="bg-yellow-400/30 text-yellow-700 dark:text-amber-300 rounded-full w-6 h-6 flex items-center justify-center font-black">i</span>
@@ -207,7 +225,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* 年度預算總結區塊 */}
             <div className="bg-white/60 dark:bg-slate-800/50 backdrop-blur-3xl border border-white/80 dark:border-slate-700/60 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] shadow-sm">
               <h3 className="text-xl font-bold mb-6 text-center text-indigo-950 dark:text-slate-100 bg-white/70 dark:bg-slate-800/80 inline-block px-6 py-2 rounded-full border border-white/80 dark:border-slate-700/60 shadow-sm mx-auto flex w-max">{t('budget.summaryTitle')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 text-center">
@@ -227,7 +244,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Needs 與 Wants 表格 */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
               {['needs', 'wants'].map(type => {
                 const isNeeds = type === 'needs';
@@ -377,29 +393,168 @@ export default function App() {
           </div>
         )}
 
+        {/* 定期定額計算機 (含複利成長曲線圖表) */}
         {currentTab === 'regular' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
-            <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-xl border border-white/80 dark:border-slate-700/50 p-6 md:p-10 rounded-[1.5rem] flex flex-col justify-center space-y-6">
-              <h3 className="text-xl font-bold border-b border-indigo-100 dark:border-slate-700/60 pb-4 mb-2 text-indigo-950 dark:text-indigo-200">{t('regular.paramsTitle')}</h3>
-              {[['monthly', 'monthlyInvest', 'currency'], ['rate', 'annualRate', '%'], ['years', 'years', 'year']].map(([key, labelKey, unit]) => (
-                <div key={key}>
-                  <label className="block text-sm font-bold text-indigo-950 dark:text-slate-200 mb-2">{t(`regular.${labelKey}`)}</label>
-                  <div className="relative">
-                    <input type="number" min="0" step={key === 'rate' ? '0.1' : '1'} value={regular[key]} onChange={e => setRegular({ ...regular, [key]: Number(e.target.value) })} className="w-full p-4 pr-14 bg-white/80 dark:bg-slate-800/90 border border-white dark:border-slate-700/60 rounded-xl text-right font-black text-indigo-950 dark:text-white text-lg outline-none" />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-500 dark:text-indigo-400 font-bold text-sm pointer-events-none">{unit === '%' ? '%' : t(`units.${unit}`)}</span>
+          <div className="space-y-8 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+              <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-xl border border-white/80 dark:border-slate-700/50 p-6 md:p-8 rounded-[1.5rem] flex flex-col justify-center space-y-5">
+                <h3 className="text-xl font-bold border-b border-indigo-100 dark:border-slate-700/60 pb-3 text-indigo-950 dark:text-indigo-200">
+                  {t('regular.paramsTitle')}
+                </h3>
+                {[
+                  ['monthly', 'monthlyInvest', 'currency'],
+                  ['rate', 'annualRate', '%'],
+                  ['years', 'years', 'year']
+                ].map(([key, labelKey, unit]) => (
+                  <div key={key}>
+                    <label className="block text-sm font-bold text-indigo-950 dark:text-slate-200 mb-1.5">
+                      {t(`regular.${labelKey}`)}
+                    </label>
+                    <div className="relative">
+                      <input 
+                        type="number" 
+                        min="0" 
+                        step={key === 'rate' ? '0.1' : '1'} 
+                        value={regular[key]} 
+                        onChange={e => setRegular({ ...regular, [key]: Number(e.target.value) })} 
+                        className="w-full p-3.5 pr-14 bg-white/80 dark:bg-slate-800/90 border border-white dark:border-slate-700/60 rounded-xl text-right font-black text-indigo-950 dark:text-white text-lg outline-none focus:border-indigo-500" 
+                      />
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-500 dark:text-indigo-400 font-bold text-sm pointer-events-none">
+                        {unit === '%' ? '%' : t(`units.${unit}`)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex flex-col justify-center">
+                <div className="bg-gradient-to-br from-indigo-500 to-purple-600 dark:from-indigo-600 dark:to-purple-700 p-6 md:p-8 rounded-[1.5rem] shadow-xl text-center h-full flex flex-col justify-between text-white">
+                  <div>
+                    <h4 className="text-sm md:text-base font-bold text-indigo-100 mb-1 uppercase tracking-wider">
+                      {t('regular.resultTitle')}
+                    </h4>
+                    <div className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 tracking-tight">
+                      ${format(regularCalc.totalValue)}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <div className="bg-black/20 backdrop-blur-md p-3 rounded-xl border border-white/10 text-left">
+                      <span className="text-xs text-indigo-200 block mb-0.5">💵 累積投入本金</span>
+                      <span className="text-lg font-bold">${format(regularCalc.totalPrincipal)}</span>
+                    </div>
+                    <div className="bg-emerald-500/20 backdrop-blur-md p-3 rounded-xl border border-emerald-400/30 text-left">
+                      <span className="text-xs text-emerald-200 block mb-0.5">🚀 複利獲利收益</span>
+                      <span className="text-lg font-bold text-emerald-300">
+                        +${format(regularCalc.totalInterest)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="text-xs text-left font-mono bg-black/30 p-3.5 rounded-xl border border-white/10 text-indigo-100">
+                    <strong className="text-white mb-1 block">{t('regular.formulaTitle')}</strong>
+                    <p>{t('regular.moRateText')} = {(regular.rate/12).toFixed(3)}% | {t('regular.totalPeriods')} = {regular.years * 12} {t('regular.monthsText')}</p>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
-            <div className="flex flex-col justify-center">
-              <div className="bg-gradient-to-br from-indigo-500 to-purple-600 dark:from-indigo-600 dark:to-purple-700 p-6 md:p-10 rounded-[1.5rem] shadow-xl text-center h-full flex flex-col justify-center text-white">
-                <h4 className="text-sm md:text-lg font-bold text-indigo-100 mb-2 uppercase">{t('regular.resultTitle')}</h4>
-                <div className="text-4xl md:text-6xl font-black mb-6 tracking-tight">${format(regularCalc.totalValue)}</div>
-                <div className="text-xs md:text-sm text-left font-mono bg-black/20 p-4 rounded-xl border border-white/20 text-indigo-100">
-                  <strong className="text-white mb-2 block">{t('regular.formulaTitle')}</strong>
-                  <p>{t('regular.moRateText')} = {(regular.rate/12).toFixed(3)}% | {t('regular.totalPeriods')} = {regular.years * 12} {t('regular.monthsText')}</p>
-                  <p className="mt-2 font-bold">{t('regular.formulaDesc')} ({regularCalc.fvFactor.toFixed(2)})</p>
+
+            {/* 複利成長曲線視覺化圖表 */}
+            <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border border-white/80 dark:border-slate-700/60 p-6 md:p-8 rounded-[1.5rem] shadow-lg">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div>
+                  <h3 className="text-lg font-bold text-indigo-950 dark:text-slate-100 flex items-center gap-2">
+                    📈 複利成長曲線分析 (Compound Growth Trend)
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    綠紫色區塊為「複利帶來的利滾利收益」，時間越長曲線斜率越陡峭！
+                  </p>
                 </div>
+                <div className="flex items-center gap-4 text-xs font-bold">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-3 h-3 rounded-sm bg-indigo-500/80 inline-block"></span>
+                    <span className="text-slate-600 dark:text-slate-300">累積本金</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-3 h-3 rounded-sm bg-gradient-to-r from-purple-500 to-emerald-400 inline-block"></span>
+                    <span className="text-slate-600 dark:text-slate-300">複利收益</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative w-full h-64 md:h-80">
+                <svg className="w-full h-full overflow-visible" viewBox="0 0 500 200" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="principalGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#6366f1" stopOpacity="0.4" />
+                      <stop offset="100%" stopColor="#6366f1" stopOpacity="0.05" />
+                    </linearGradient>
+                    <linearGradient id="interestGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#10b981" stopOpacity="0.6" />
+                      <stop offset="50%" stopColor="#a855f7" stopOpacity="0.4" />
+                      <stop offset="100%" stopColor="#6366f1" stopOpacity="0.1" />
+                    </linearGradient>
+                  </defs>
+
+                  {[0, 0.25, 0.5, 0.75, 1].map((ratio, idx) => (
+                    <line 
+                      key={idx} 
+                      x1="0" 
+                      y1={200 * ratio} 
+                      x2="500" 
+                      y2={200 * ratio} 
+                      stroke="currentColor" 
+                      className="text-slate-200 dark:text-slate-700/50" 
+                      strokeDasharray="4 4" 
+                    />
+                  ))}
+
+                  {(() => {
+                    const maxVal = Math.max(1, regularCalc.totalValue);
+                    const count = regularChartData.length;
+                    
+                    const totalPoints = regularChartData.map((d, i) => {
+                      const x = (i / (count - 1)) * 500;
+                      const y = 200 - (d.total / maxVal) * 180;
+                      return `${x},${y}`;
+                    }).join(' ');
+
+                    const principalPoints = regularChartData.map((d, i) => {
+                      const x = (i / (count - 1)) * 500;
+                      const y = 200 - (d.principal / maxVal) * 180;
+                      return `${x},${y}`;
+                    }).join(' ');
+
+                    const totalAreaPath = `M 0,200 L ${totalPoints} L 500,200 Z`;
+                    const principalAreaPath = `M 0,200 L ${principalPoints} L 500,200 Z`;
+
+                    return (
+                      <>
+                        <path d={totalAreaPath} fill="url(#interestGrad)" />
+                        <path d={`M ${totalPoints}`} fill="none" stroke="#10b981" strokeWidth="3" />
+
+                        <path d={principalAreaPath} fill="url(#principalGrad)" />
+                        <path d={`M ${principalPoints}`} fill="none" stroke="#6366f1" strokeWidth="2" strokeDasharray="3 3" />
+                      </>
+                    );
+                  })()}
+                </svg>
+
+                <div className="flex justify-between items-center text-xs text-slate-400 mt-2 font-mono">
+                  <span>第 0 年</span>
+                  <span>第 {Math.round(regular.years / 2)} 年</span>
+                  <span>第 {regular.years} 年</span>
+                </div>
+              </div>
+
+              <div className="mt-6 p-4 rounded-xl bg-indigo-50 dark:bg-slate-900/60 border border-indigo-100 dark:border-slate-700/50 flex items-center justify-between text-xs md:text-sm">
+                <span className="text-indigo-900 dark:text-indigo-200 font-medium">
+                  💡 <strong>複利小結：</strong> 在第 {regular.years} 年時，複利獲利佔了總資產的{' '}
+                  <strong className="text-emerald-500 font-bold text-base">
+                    {regularCalc.totalValue > 0 ? ((regularCalc.totalInterest / regularCalc.totalValue) * 100).toFixed(1) : 0}%
+                  </strong>
+                  ！
+                </span>
               </div>
             </div>
           </div>
